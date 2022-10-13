@@ -15,13 +15,14 @@
 
             <ion-list v-for="item in todos" :key="item.index">
                 <ion-label>
-                    <h1>{{item.todo}}</h1>
+                    <h1>{{item.title}}</h1>
+                    <p>{{item.todo}}</p>
                     <h6 style="color: #777777">{{map.get(item.flag)}}</h6>
                 </ion-label>
             </ion-list>
             <hr>
 
-            <ion-button @click="intent" expand="round" size="large" class="ion-float-right">Todo作成</ion-button>
+            <ion-button @click="intent" expand="round" class="ion-float-right">Todo作成</ion-button>
 
         </ion-content>
     </ion-page>
@@ -51,7 +52,7 @@ export default defineComponent({
         const title = ref(props.Title)
         const map = reactive(new Map([[0, "未達成"],[1, "達成済み"]]))
         const todos = ref({})
-        axios.get("http://localhost:3000/zemi")
+        axios.get("http://localhost:3000/zemi/select")
         .then((response) => {
             console.log(response.data)
             todos.value = response.data

@@ -40,6 +40,7 @@ import {
     IonInput,
     IonItem,
 } from '@ionic/vue';
+import axios from 'axios';
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
@@ -49,6 +50,7 @@ export default defineComponent({
         const discription = ref(String)
         const img = ref("images/elephant_apng_zopfli.png")
 
+        axios.post("http://localhost:3000/zemi/insert", {})
         return{
             title,
             discription,
