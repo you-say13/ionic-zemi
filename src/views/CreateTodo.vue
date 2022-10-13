@@ -12,12 +12,18 @@
             </ion-toolbar>
         </ion-header>
 
-        <ion-item>
-            <ion-label position="floationg"></ion-label>
-        </ion-item>
-        <ion-input></ion-input>
-
-        <ion-button @click="asd" class="ion-float-right"></ion-button>
+        <div class="ion-padding-horizontal">
+            <ion-item>
+                <ion-label position="stacked">Todo</ion-label>
+                <ion-input></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label position="stacked">説明</ion-label>
+                <ion-input></ion-input>
+            </ion-item>
+            <ion-button @click="asd" expand="round" class="ion-float-right">作成</ion-button>
+        </div>
+        <img :src="img" class="ion-padding-horizontal">
 
     </ion-content>
 </ion-page>
@@ -41,10 +47,13 @@ export default defineComponent({
         const title = ref(props.Title)
         const todo = ref(String)
         const discription = ref(String)
+        const img = ref("images/elephant_apng_zopfli.png")
+
         return{
             title,
             discription,
-            todo
+            todo,
+            img
         }
     },
     props:{
@@ -63,3 +72,8 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped>
+div{
+    --ion-padding: 10%;
+}
+</style>
