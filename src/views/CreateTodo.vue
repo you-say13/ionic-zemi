@@ -14,7 +14,7 @@
 
         <div class="ion-padding-horizontal">
             <ion-item>
-                <ion-label position="stacked">タイトル</ion-label>
+                <ion-label position="stacked">Todo</ion-label>
                 <ion-input></ion-input>
             </ion-item>
             <ion-item>
