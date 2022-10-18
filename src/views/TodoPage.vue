@@ -2,27 +2,31 @@
     <ion-page>
         <ion-header :translucent="true">
         <ion-toolbar>
-            <ion-title>{{title}}</ion-title>
+            <ion-buttons>
+                <ion-title>{{title}}</ion-title>
+                <ion-button @click="intent" expand="round" class="ion-float-right">Todo追加</ion-button>
+            </ion-buttons>
         </ion-toolbar>
         </ion-header>
     
         <ion-content :fullscreen="true">
-            <ion-header collapse="condense">
-                <ion-toolbar>
-                <ion-title size="large">{{title}}</ion-title>
-                </ion-toolbar>
-            </ion-header>
 
-            <ion-list v-for="item in todos" :key="item.index">
+            <ion-list v-for="item in todos" :key="item.todo_id">
                 <ion-label>
-                    <h1>{{item.title}}</h1>
-                    <p>{{item.todo}}</p>
-                    <h6 style="color: #777777">{{map.get(item.flag)}}</h6>
+                    <ion-item @click="asd">
+                        <h1>{{item.title}}</h1>
+                        <!-- <p style="color: #000000">{{item.todo}}</p> -->
+                        <h6 style="color: #777777">{{map.get(item.flag)}}</h6>
+                        <ion-buttons class="ion-float-rignt">
+                            <ion-button>削除</ion-button>
+                            <ion-button>達成</ion-button>
+                        </ion-buttons>
+                    </ion-item>
                 </ion-label>
+                <hr>
             </ion-list>
-            <hr>
 
-            <ion-button @click="intent" expand="round" class="ion-float-right">Todo作成</ion-button>
+            
 
         </ion-content>
     </ion-page>
@@ -35,7 +39,6 @@ import {
     IonPage, 
     IonTitle, 
     IonToolbar, 
-    IonButton, 
     IonList,
     IonLabel,
 } from '@ionic/vue';
@@ -52,7 +55,7 @@ export default defineComponent({
         const title = ref(props.Title)
         const map = reactive(new Map([[0, "未達成"],[1, "達成済み"]]))
         const todos = ref({})
-        axios.get("http://localhost:3000/zemi/select")
+        axios.get("http://10.16.10.64:3000/zemi/select")
         .then((response) => {
             console.log(response.data)
             todos.value = response.data
@@ -79,9 +82,13 @@ export default defineComponent({
         IonPage,
         IonTitle,
         IonToolbar,
-        IonButton,
         IonList,
-        IonLabel
+        IonLabel,
     }
 })
 </script>
+<style>
+ion-title{
+    text-align: center;
+}
+</style>
