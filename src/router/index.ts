@@ -31,7 +31,8 @@ const routes: Array<RouteRecordRaw> = [
     name: 'create',
     component: Create,
     props: {Title: "CreateTodo"}
-  }
+  },
+
 ]
 
 const router = createRouter({

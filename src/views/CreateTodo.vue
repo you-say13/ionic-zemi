@@ -35,6 +35,7 @@ import {
     IonLabel,
     IonInput,
     IonItem,
+    IonBackButton,
 } from '@ionic/vue';
 import axios from 'axios';
 import { defineComponent, ref } from 'vue'
@@ -85,6 +86,7 @@ export default defineComponent({
         IonLabel,
         IonInput,
         IonItem,
+        IonBackButton,
     }
 })
 </script>
