@@ -10,17 +10,17 @@
         </ion-header>
     
         <ion-content :fullscreen="true">
-
+            
             <ion-list v-for="item in todos" :key="item.todo_id">
                 <ion-label>
-                    <ion-item @click="asd">
+                    <ion-item>
                         <h1>{{item.title}}</h1>
                         <!-- <p style="color: #000000">{{item.todo}}</p> -->
-                        <h6 style="color: #777777">{{map.get(item.flag)}}</h6>
-                        <ion-buttons class="ion-float-rignt">
+                        <ion-buttons style="color: #1e90ff;">
                             <ion-button>削除</ion-button>
                             <ion-button>達成</ion-button>
                         </ion-buttons>
+                        <p style="color: #777777" class="ion-float-right">{{map.get(item.flag)}}</p>
                     </ion-item>
                 </ion-label>
                 <hr>
@@ -53,9 +53,9 @@ export default defineComponent({
     },
     setup(props) {
         const title = ref(props.Title)
-        const map = reactive(new Map([[0, "未達成"],[1, "達成済み"]]))
+        const map = reactive(new Map([[0, "未達"],[1, "達成"]]))
         const todos = ref({})
-        axios.get("http://10.16.10.64:3000/zemi/select")
+        axios.get("http://10.16.10.61:3000/zemi/select")
         .then((response) => {
             console.log(response.data)
             todos.value = response.data

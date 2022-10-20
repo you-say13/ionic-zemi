@@ -1,12 +1,11 @@
 <template>
 <ion-page>
-    <ion-header :translucent="true">
+        <ion-header :translucent="true">
         <ion-toolbar class="ion-float-left">
             <ion-buttons>
                 <ion-back-button default-href="/Todo"></ion-back-button>
                 <ion-title>{{title}}</ion-title>
             </ion-buttons>
-            
         </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -31,15 +30,11 @@
 import router from '@/router';
 import { 
     IonContent, 
-    IonHeader, 
     IonPage, 
-    IonTitle, 
-    IonToolbar, 
     IonButton, 
     IonLabel,
     IonInput,
     IonItem,
-    IonBackButton
 } from '@ionic/vue';
 import axios from 'axios';
 import { defineComponent, ref } from 'vue'
@@ -54,7 +49,7 @@ export default defineComponent({
         const insert = () =>{
             console.log(todo)
             console.log(desc)
-            axios.post("http://10.16.10.64:3000/zemi/insert", {
+            axios.post("http://10.16.10.61:3000/zemi/insert", {
                 Todo:todo.value,
                 Desc:desc.value
             })
@@ -85,15 +80,11 @@ export default defineComponent({
     },
     components:{
         IonContent, 
-        IonHeader, 
         IonPage, 
-        IonTitle, 
-        IonToolbar, 
         IonButton, 
         IonLabel,
         IonInput,
         IonItem,
-        IonBackButton,
     }
 })
 </script>
