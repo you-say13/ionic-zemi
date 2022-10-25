@@ -8,16 +8,38 @@
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
+        <ion-content>
+            <h1>{{todos.title}}</h1>
+            <p>{{todos.todo_id}}</p>
+            <p>{{todos.todo}}</p>
+            <p>{{todos.flag}}</p>
+            <p>{{todos.date}}</p>
+        </ion-content>
     </ion-page>
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import {
+    IonPage,
+    IonHeader,
+    IonToolbar,
+    IonBackButton,
+    IonButtons,
+    IonContent,
+    IonTitle,
+} from '@ionic/vue'
 
 export default defineComponent({
     setup(props) {
         const title = ref(props.Title)
-        const todos = ref({})
+        const todos = ref({
+            todo_id: Number,
+            title: String,
+            todo: String,
+            flag: Boolean,
+            date: Date
+        })
 
         onMounted(() =>{
             const route = useRoute()
@@ -28,25 +50,35 @@ export default defineComponent({
 
             console.log("get routing id:"+id)
 
-            fetch("http://10.16.10.76:3000/zemi/desc?id=" + id)
+            fetch("http://192.168.11.47:3000/zemi/desc?id=" + id)
                 .then(response=>{
                     return response.json()
                 }).then(res =>{
-                    console.log(res)
-                    todos.value = res
+                    console.log(res[0])
+                    todos.value = res[0]
                 }).catch((err)=>{
                     console.log(err)
                 })
         })
 
         return {
-            title
+            title,
+            todos
         }
     },
     props:{
         Title:{
             type:String
         }
+    },
+    components:{
+        IonPage,
+        IonHeader,
+        IonToolbar,
+        IonBackButton,
+        IonButtons,
+        IonContent,
+        IonTitle
     }
 })
 </script>
