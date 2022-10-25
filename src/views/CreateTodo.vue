@@ -11,14 +11,14 @@
     <ion-content :fullscreen="true">
         <div class="ion-padding-horizontal">
             <ion-item>
-                <ion-label position="stacked">Todo</ion-label>
-                <ion-input v-model="todo"></ion-input>
+                <ion-label position="floating">Todo</ion-label>
+                <ion-input  type="text" v-model="todo" minlength="1" maxlength="20"></ion-input>
             </ion-item>
             <ion-item>
-                <ion-label position="stacked">説明</ion-label>
-                <ion-input v-model="desc"></ion-input>
+                <ion-label position="floating">説明</ion-label>
+                <ion-input type="text" v-model="desc" maxlength="100"></ion-input>
             </ion-item>
-            
+            <p style="color: red;">{{msg}}</p>
             <ion-button @click="insert" expand="round" class="ion-float-right">作成</ion-button>
         </div>
         <img :src="img" class="ion-padding-horizontal">
@@ -46,21 +46,26 @@ export default defineComponent({
         const todo = ref()
         const desc = ref()
         const img = ref("images/elephant_apng_zopfli.png")
+        const msg = ref()
 
         const insert = () =>{
-            console.log(todo)
-            console.log(desc)
-            axios.post("http://10.16.10.61:3000/zemi/insert", {
-                Todo:todo.value,
-                Desc:desc.value
-            })
-            .then((response) =>{
-                console.log(response)
-                router.push("Todo")
-            })
-            .catch((error)=>{
-                console.log(error)
-            })
+            if(todo.value != null){
+                console.log(todo)
+                console.log(desc)
+                axios.post("http://10.16.10.61:3000/zemi/insert", {
+                    Todo:todo.value,
+                    Desc:desc.value
+                })
+                .then((response) =>{
+                    console.log(response)
+                    router.push("Todo")
+                })
+                .catch((error)=>{
+                    console.log(error)
+                })
+            }else{
+                msg.value = "入力に不正があります"
+            }
         }
 
         const back = () =>{
@@ -73,7 +78,8 @@ export default defineComponent({
             todo,
             img,
             insert,
-            back
+            back,
+            msg
         }
     },
     props:{
