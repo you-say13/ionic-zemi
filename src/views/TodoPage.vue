@@ -17,14 +17,15 @@
                 <ion-checkbox v-model="uncomp_flag.value" @change="uncomplete_only()"></ion-checkbox>
                 <ion-label>未達成のみ</ion-label>
             </ion-item>
-            <ion-list v-for="item in todos" :key="item.todo_id">
+            <ion-list v-for="(item, index) in todos" :key="item.todo_id">
                 <ion-label>
-                    <ion-item button @click="desc(item.todo_id)">
+                    <ion-item>
                         <h1>{{item.title}}</h1>
                         <p style="color: #000000;">{{item.todo}}</p>
                         <ion-buttons style="color: #1e90ff;">
-                            <ion-button @click="del()">削除</ion-button>
-                            <ion-button @click="upd()">達成</ion-button>
+                            <ion-button @click="del(item.todo_id, index)">削除</ion-button>
+                            <ion-button @click="upd(item.todo_id, index)">達成</ion-button>
+                            <ion-button @click="desc(item.todo_id)">詳細</ion-button>
                         </ion-buttons>
                         <p style="color: #777777" class="ion-float-right">{{map.get(item.flag)}}</p>
                     </ion-item>
@@ -58,7 +59,13 @@ export default defineComponent({
     setup(props) {
         const title = ref(props.Title)
         const map = reactive(new Map([[0, "未達"],[1, "達成"]]))
-        const todos = ref({})
+        const todos = ref([
+            Number,
+            String,
+            String,
+            Boolean,
+            Date
+        ])
         const comp_flag = ref(Boolean)
         const uncomp_flag = ref(Boolean)
 
@@ -89,23 +96,33 @@ export default defineComponent({
             console.log("uncomplete_only" + uncomp_flag.value)
         }
 
-        const del = (todo_id: number) =>{
+        const del = (todo_id: number, id:number) =>{
             fetch("http://" + ipaddress + ":3000/zemi/delete?id="+todo_id)
                 .then(response=>{
                     return response
                 }).then(res=>{
                     console.log(res)
+                    todos.value.splice(id, 1)
                     alert("削除完了しました")
+                }).catch(err =>{
+                    console.log(err)
+                    alert("削除失敗しました")
                 })
         }
 
-        const upd = (todo_id: number) =>{
+        const upd = (todo_id: number, id:number) =>{
             fetch("http://" + ipaddress + ":3000/zemi/update?id=" + todo_id)
                 .then(response=>{
                     return response
                 }).then(res=>{
-                    console.log(res)
+                    const item = todos.value[id]
+                    
+                    console.log("response:"+res+" and index number:"+id)
                     alert("TODOを達成しました")
+                    todos.value.splice(id, 1)
+                }).catch(err=>{
+                    console.log(err)
+                    alert("達成に変更できませんでした")
                 })
         }
 

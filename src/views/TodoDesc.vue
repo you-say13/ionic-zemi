@@ -8,12 +8,12 @@
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
-        <ion-content>
-            <h1>{{todos.title}}</h1>
-            <p>{{todos.todo_id}}</p>
-            <p>{{todos.todo}}</p>
-            <p>{{todos.flag}}</p>
-            <p>{{todos.date}}</p>
+        <ion-content class="ion-text-center">
+            <h1>タイトル:{{todos.title}}</h1>
+            <p>Todo番号:{{todos.todo_id}}</p>
+            <p>内容:{{todos.todo}}</p>
+            <p>進捗:{{todos.flag}}</p>
+            <p>日付:{{todos.date}}</p>
         </ion-content>
     </ion-page>
 </template>
@@ -34,13 +34,13 @@ import ipaddress from '@/address'
 export default defineComponent({
     setup(props) {
         const title = ref(props.Title)
-        const todos = ref({
-            todo_id: Number,
-            title: String,
-            todo: String,
-            flag: Boolean,
-            date: Date
-        })
+        const todos = ref([
+            Number,
+            String,
+            String,
+            Boolean,
+            Date
+        ])
 
         onMounted(() =>{
             const route = useRoute()
