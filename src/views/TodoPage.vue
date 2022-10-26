@@ -23,8 +23,8 @@
                         <h1>{{item.title}}</h1>
                         <p style="color: #000000;">{{item.todo}}</p>
                         <ion-buttons style="color: #1e90ff;">
-                            <ion-button>削除</ion-button>
-                            <ion-button>達成</ion-button>
+                            <ion-button @click="del()">削除</ion-button>
+                            <ion-button @click="upd()">達成</ion-button>
                         </ion-buttons>
                         <p style="color: #777777" class="ion-float-right">{{map.get(item.flag)}}</p>
                     </ion-item>
@@ -89,6 +89,26 @@ export default defineComponent({
             console.log("uncomplete_only" + uncomp_flag.value)
         }
 
+        const del = (todo_id: number) =>{
+            fetch("http://" + ipaddress + ":3000/zemi/delete?id="+todo_id)
+                .then(response=>{
+                    return response
+                }).then(res=>{
+                    console.log(res)
+                    alert("削除完了しました")
+                })
+        }
+
+        const upd = (todo_id: number) =>{
+            fetch("http://" + ipaddress + ":3000/zemi/update?id=" + todo_id)
+                .then(response=>{
+                    return response
+                }).then(res=>{
+                    console.log(res)
+                    alert("TODOを達成しました")
+                })
+        }
+
         const desc = (todo_id: number) =>{
             console.log(todo_id)
             rout.push({
@@ -106,7 +126,9 @@ export default defineComponent({
             uncomplete_only,
             comp_flag,
             uncomp_flag,
-            desc
+            desc,
+            del,
+            upd
         }
     },
     components:{
