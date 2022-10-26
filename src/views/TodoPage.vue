@@ -47,6 +47,7 @@ import {
 } from '@ionic/vue';
 import { defineComponent, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router';
+import ipaddress from '@/address'
 
 export default defineComponent({
     props:{
@@ -63,7 +64,9 @@ export default defineComponent({
 
         const rout = useRouter()
 
-        fetch("http://10.16.10.76:3000/zemi/select")
+        console.log(ipaddress)
+
+        fetch("http://"+ ipaddress +":3000/zemi/select")
             .then(response => {
                 return response.json()
             }).then(res =>{

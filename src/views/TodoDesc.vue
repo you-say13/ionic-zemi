@@ -29,6 +29,7 @@ import {
     IonContent,
     IonTitle,
 } from '@ionic/vue'
+import ipaddress from '@/address'
 
 export default defineComponent({
     setup(props) {
@@ -50,7 +51,7 @@ export default defineComponent({
 
             console.log("get routing id:"+id)
 
-            fetch("http://192.168.11.47:3000/zemi/desc?id=" + id)
+            fetch("http://"+ipaddress+":3000/zemi/desc?id=" + id)
                 .then(response=>{
                     return response.json()
                 }).then(res =>{

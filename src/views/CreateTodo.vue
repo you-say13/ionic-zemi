@@ -39,6 +39,7 @@ import {
 } from '@ionic/vue';
 import axios from 'axios';
 import { defineComponent, ref } from 'vue'
+import ipaddress from '@/address'
 
 export default defineComponent({
     setup(props) {
@@ -52,7 +53,7 @@ export default defineComponent({
             if(todo.value != null){
                 console.log(todo)
                 console.log(desc)
-                axios.post("http://10.16.10.61:3000/zemi/insert", {
+                axios.post("http://"+ipaddress+":3000/zemi/insert", {
                     Todo:todo.value,
                     Desc:desc.value
                 })
