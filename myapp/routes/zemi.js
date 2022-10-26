@@ -40,6 +40,24 @@ router.get('/desc', function(req,res,next){
   })
 })
 
+router.get('/update', function(req, res, next){
+  const q = "update todo set flag = 1 where ?";
+  con.query(q, {todo_id: req.query.id}, (err, results, fields)=>{
+    if(err)throw err;
+    console.log("success update flag!");
+    res.send(results)
+  })
+})
+
+router.get('/delete', function(req, res, next){
+  const q = "delete from todo where ?";
+  con.query(q, {todo_id: req.query.id}, (err, results, fields)=>{
+    if(err)throw err;
+    console.log("success delete flag!");
+    res.send(results)
+  })
+})
+
 router.post('/insert', function(req, res, next){
   const p_title = req.body.Todo
   const p_todo = req.body.Desc
