@@ -41,7 +41,7 @@ router.get('/desc', function(req,res,next){
 })
 
 router.get('/update', function(req, res, next){
-  const q = "update todo set flag = 1 where ?";
+  const q = "update todo set flag = 1 where ?;";
   con.query(q, {todo_id: req.query.id}, (err, results, fields)=>{
     if(err)throw err;
     console.log("success update flag!");
@@ -50,7 +50,7 @@ router.get('/update', function(req, res, next){
 })
 
 router.get('/delete', function(req, res, next){
-  const q = "delete from todo where ?";
+  const q = "delete from todo where ?;";
   con.query(q, {todo_id: req.query.id}, (err, results, fields)=>{
     if(err)throw err;
     console.log("success delete flag!");
