@@ -46,7 +46,7 @@ import {
     IonCheckbox,
 
 } from '@ionic/vue';
-import { defineComponent, ref, reactive } from 'vue'
+import { defineComponent, ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import ipaddress from '@/address'
 
@@ -73,7 +73,12 @@ export default defineComponent({
 
         console.log(ipaddress)
 
-        fetch("http://"+ ipaddress +":3000/zemi/select")
+        onMounted(()=>{
+            allfetch()
+        })
+
+        const allfetch = () =>{
+            fetch("http://"+ ipaddress +":3000/zemi/select")
             .then(response => {
                 return response.json()
             }).then(res =>{
@@ -83,6 +88,7 @@ export default defineComponent({
             .catch((error)=>{
                 console.log("occurred error:" + error)
             })
+        }
         
         const intent = () =>{
             rout.push("/createTodo")
@@ -115,11 +121,9 @@ export default defineComponent({
                 .then(response=>{
                     return response
                 }).then(res=>{
-                    const item = todos.value[id]
-                    
                     console.log("response:"+res+" and index number:"+id)
+                    allfetch()
                     alert("TODOを達成しました")
-                    todos.value.splice(id, 1)
                 }).catch(err=>{
                     console.log(err)
                     alert("達成に変更できませんでした")
@@ -145,7 +149,8 @@ export default defineComponent({
             uncomp_flag,
             desc,
             del,
-            upd
+            upd,
+            allfetch
         }
     },
     components:{
