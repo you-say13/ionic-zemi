@@ -150,7 +150,7 @@ export default defineComponent({
             desc,
             del,
             upd,
-            allfetch
+            allfetch,
         }
     },
     components:{
