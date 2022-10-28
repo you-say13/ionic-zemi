@@ -15,7 +15,6 @@ import {
 } from "@ionic/vue"
 import { defineComponent } from "@vue/runtime-core"
 import { useRouter} from 'vue-router'
-import axios from "axios"
 
 export default defineComponent({
     name:'TitlePage',
@@ -24,24 +23,15 @@ export default defineComponent({
         IonContent
     },
     setup(){
-        const router = useRouter();
-        axios.get("https://api.kenall.jp/v1/whoami", {
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
-            "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token"
+        const router = useRouter()
+        const mv = () =>{
+            router.push("/todo")
         }
-        })
-        .then((response)=>{
-            console.log(response)
-        })
-        return { router }
+
+        return{
+            mv
+        }
     },
-    methods:{
-        mv(){
-            this.router.push("/todo")
-        }
-    }
 })
 </script>
 <style>
