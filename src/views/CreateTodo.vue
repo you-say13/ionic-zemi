@@ -16,7 +16,7 @@
             </ion-item>
             <ion-item>
                 <ion-label position="floating">説明</ion-label>
-                <ion-input type="text" v-model="desc" maxlength="100"></ion-input>
+                <ion-textarea maxlength="100" v-model="desc" autoGrow="true"></ion-textarea>
             </ion-item>
             <p style="color: red;">{{msg}}</p>
             <ion-button @click="insert" expand="round" class="ion-float-right">作成</ion-button>
@@ -36,6 +36,7 @@ import {
     IonInput,
     IonItem,
     IonBackButton,
+    IonTextarea
 } from '@ionic/vue';
 import axios from 'axios';
 import { defineComponent, ref } from 'vue'
@@ -59,6 +60,7 @@ export default defineComponent({
                 })
                 .then((response) =>{
                     console.log(response)
+                    alert("Todoを作成しました")
                     router.push("Todo")
                 })
                 .catch((error)=>{
@@ -94,6 +96,7 @@ export default defineComponent({
         IonInput,
         IonItem,
         IonBackButton,
+        IonTextarea
     }
 })
 </script>
