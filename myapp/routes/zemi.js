@@ -2,8 +2,13 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 const cors = require('cors');
-const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
 const { check, validationResult } = require('express-validator');
+router.use(cors());
+router.use(express.json())
+
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.json());
 
 const con = mysql.createConnection({
   host: 'localhost',
@@ -13,14 +18,6 @@ const con = mysql.createConnection({
   stringifyObjects: true,
 });
 
-function valiadation(text1, text2){
-  if(text1 == null || text1.length > 20 && text2.length > 100){
-    return false
-  }else{
-    return true
-  }
-}
-
 con.connect((err) =>{
   if(err){
     console.log('error connecting: ' + err.stack);
@@ -29,9 +26,6 @@ con.connect((err) =>{
   console.log('success to connection mysql server!!')
 });
 
-router.use(cookieParser())
-router.use(cors());
-router.use(express.json())
 
 /* GET todo listing. */
 router.get('/select', [
@@ -81,28 +75,34 @@ router.get('/delete', function(req, res, next){
   })
 })
 
-router.get('/insert',[
+router.post('/insert', [
   check('Todo').not().isEmpty().isLength({min:1, max:20}),
   check('Desc').isLength({min:0, max:100}),
   check('user_id').not().isEmpty().isNumeric()
-], function(req, res, next){
+], function(req, res){
   const errors = validationResult(req);
+
+  console.log(req.body.title)
 
   if(!errors.isEmpty()){
     res.send({message:"bad request", flag:-1})
   }else{
-    const p_title = req.query.Todo
-    const p_todo = req.query.Desc
-    const p_id = req.query.User
+
+    const p_title = req.body.title
+    const p_todo = req.body.desc || ""
+    const p_id = req.body.user_id
+
+    console.log(p_todo)
   
     const q = "insert into todo(title, todo, flag, date, userid) values (?, ?, 0, now(), ?);";
     con.query(q ,[p_title, p_todo, p_id], (error, results, fields)=>{
       console.log("success to insert todo!!");
       res.send({message:"success to insert todo!!", flag:1})
     })
-    res.send({flag:100})
   }
 })
+
+
 //新規登録
 router.get('/signup', [
   check('name').not().isEmpty().isLength({min:1, max:20}),

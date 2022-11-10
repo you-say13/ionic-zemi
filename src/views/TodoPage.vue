@@ -111,8 +111,6 @@ export default defineComponent({
             .then(response => {
                 return response.json()
             }).then(res =>{
-
-                console.log(res)
                 todos.value = res
 
             })
