@@ -51,7 +51,7 @@ export default defineComponent({
 
             console.log("get routing id:"+id)
 
-            fetch("http://"+ipaddress+":3000/zemi/desc?id=" + id)
+            fetch("http://"+ipaddress+"/zemi/desc?id=" + id)
                 .then(response=>{
                     return response.json()
                 }).then(res =>{
