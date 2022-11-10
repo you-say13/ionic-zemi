@@ -18,18 +18,29 @@
                 <ion-label>未達成のみ</ion-label>
             </ion-item>
             <ion-list v-for="(item, index) in todos" :key="item.todo_id">
-                <ion-label>
-                    <ion-item>
-                        <h1>{{item.title}}</h1>
+                <ion-item class="ion-text-center ion-padding-horizontal" style="border:solid; border-radius: 10px; color:#777777;">
+                    <ion-label v-if="item.flag">
+                        <div style="background-color:aqua">
+                            <h1>{{map.get(item.flag)}}</h1>
+                        </div>
+                    </ion-label>
+                    <ion-label v-else>
+                        <div style="background-color:orangered">
+                            <h1>{{map.get(item.flag)}}</h1>
+                        </div>
+                    </ion-label>
+                    <ion-label>
+                        <h1 style="color: #000000;">{{item.title}}</h1>
                         <p style="color: #000000;">{{item.todo}}</p>
-                        <ion-buttons style="color: #1e90ff;">
+                    </ion-label>
+                    <ion-label>
+                        <ion-buttons style="color: #1e90ff;" class="ion-float-center">
                             <ion-button @click="del(item.todo_id, index)">削除</ion-button>
                             <ion-button @click="upd(item.todo_id, index)">達成</ion-button>
                             <ion-button @click="desc(item.todo_id)">詳細</ion-button>
                         </ion-buttons>
-                        <p style="color: #777777" class="ion-float-right">{{map.get(item.flag)}}</p>
-                    </ion-item>
-                </ion-label>
+                    </ion-label>
+                </ion-item>
             </ion-list>
         </ion-content>
     </ion-page>
@@ -46,8 +57,8 @@ import {
     IonCheckbox,
 
 } from '@ionic/vue';
-import { defineComponent, ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router';
+import { defineComponent, ref, reactive, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router';
 import ipaddress from '@/address'
 import {useCookies} from "vue3-cookies"
 
@@ -71,6 +82,8 @@ export default defineComponent({
         const uncomp_flag = ref(Boolean)
 
         const router = useRouter()
+        const route = useRoute()
+
 
         const { cookies } = useCookies();
 
@@ -81,6 +94,7 @@ export default defineComponent({
         }else{
             console.log("ok cookie is "+ cookies.get('user_id'))
         }
+
 
         console.log(ipaddress)
 
@@ -100,6 +114,11 @@ export default defineComponent({
                 console.log("occurred error:" + error)
             })
         }
+
+        watch(route, () =>{
+            console.log("ルートが変わりました")
+            allfetch()
+        })
         
         const intent = () =>{
             router.push("/createTodo")

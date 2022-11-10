@@ -27,7 +27,7 @@
 </ion-page>
 </template>
 <script lang="ts">
-import router from '@/router';
+import {useRouter} from 'vue-router';
 import { 
     IonContent, 
     IonPage, 
@@ -59,6 +59,8 @@ export default defineComponent({
         const img = ref("images/elephant_apng_zopfli.png")
         const msg = ref()
 
+        const router = useRouter()
+
         const insert = () =>{
             if(todo.value != null){
                 console.log(todo.value)
@@ -69,7 +71,9 @@ export default defineComponent({
                 .then((response) =>{
                     console.log("success:"+response)
                     alert("Todoを作成しました")
-                    router.push("Todo")
+                    todo.value = ""
+                    desc.value = ""
+                    router.push("/Todo")
                 })
                 .catch((error)=>{
                     console.log("error:"+error)
