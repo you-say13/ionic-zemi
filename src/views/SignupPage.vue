@@ -99,13 +99,20 @@ export default defineComponent({
 
         //signupメソッド：新規登録用のデータをサーバに送り、返り値を待つ
         const signup = () =>{
-            const addr = "http://"+ipaddress+"/zemi/signup?name='"+name+"'&email='"+email+"'&pass='"+pass+"'"
+
+            console.log('pass signup')
+
+            const addr = "http://"+ipaddress+"/zemi/signup?name="+name.value+"&email="+email.value+"&pass="+pass.value+""
             fetch(addr)
             .then((res)=>res.json())
             .then((response)=>{
-                console.log(response);
-                alert("ユーザ登録完了!")
-                router.push("Todo")
+                if(response.flag == 1){
+                    alert("ユーザ登録完了!")
+                    router.push("/signin")
+                }else{
+                    alert("不正な入力が送られました、攻撃を停止してください")
+                }
+
             })
             .catch(console.error)
         }
