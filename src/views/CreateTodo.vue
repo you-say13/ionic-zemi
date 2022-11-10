@@ -66,13 +66,15 @@ export default defineComponent({
                 console.log(desc.value)
                 const addr = "http://"+ipaddress+"/zemi/insert?Todo='"+todo.value+"'&Desc='"+desc.value+"'"
                 fetch(addr)
-                .then((res)=> res.json())
-                .then((response) =>{
-                    console.log("success:"+response)
-                    alert("Todoを作成しました")
-                    todo.value = ""
-                    desc.value = ""
-                    router.push("/Todo")
+                .then((response)=> response.json())
+                .then((res) =>{
+                    if(res.flag==1){
+                        console.log("success:"+res.message)
+                        alert(res.message)
+                        todo.value = ""
+                        desc.value = ""
+                        router.push("/Todo")
+                    }
                 })
                 .catch((error)=>{
                     console.log("error:"+error)
