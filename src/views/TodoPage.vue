@@ -18,6 +18,9 @@
                 <ion-checkbox v-model="uncomp_flag.value" @change="uncomplete_only()"></ion-checkbox>
                 <ion-label>未達成のみ</ion-label>
             </ion-item>
+            <h1 class="ion-text-align">
+            </h1>
+
             <ion-list v-for="(item, index) in todos" :key="item.todo_id">
                 <ion-item class="ion-text-center ion-padding-horizontal" >
                     <ion-label v-if="item.flag">
@@ -104,12 +107,14 @@ export default defineComponent({
         })
 
         const allfetch = () =>{
-            fetch("http://"+ ipaddress +"/zemi/select")
+            fetch("http://"+ ipaddress +"/zemi/select?user_id="+cookies.get("user_id"))
             .then(response => {
                 return response.json()
             }).then(res =>{
+
                 console.log(res)
                 todos.value = res
+
             })
             .catch((error)=>{
                 console.log("occurred error:" + error)
@@ -126,10 +131,10 @@ export default defineComponent({
             }
         }
 
-        // watch(route, () =>{
-        //     console.log("ルートが変わりました")
-        //     allfetch()
-        // })
+        watch(route, () =>{
+            console.log("ルートが変わりました")
+            allfetch()
+        })
         
         const intent = () =>{
             router.push("/createTodo")
