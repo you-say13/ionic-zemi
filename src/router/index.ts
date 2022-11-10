@@ -4,6 +4,9 @@ import HomePage from '../views/HomePage.vue'
 import Todo from '../views/TodoPage.vue';
 import Create from '../views/CreateTodo.vue';
 import Desc from '../views/TodoDesc.vue';
+import Signup from '../views/SignupPage.vue';
+import Signin from '../views/SigninPage.vue';
+
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -38,6 +41,18 @@ const routes: Array<RouteRecordRaw> = [
     name: 'desc',
     component: Desc,
     props:{Title: "Desc"}
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: Signup,
+    props:{Title: "Signup"}
+  },
+  {
+    path: '/signin',
+    name: 'signin',
+    component: Signin,
+    props:{Title: "Signin"}
   },
 
 ]

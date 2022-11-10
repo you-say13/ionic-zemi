@@ -38,12 +38,21 @@ import {
     IonBackButton,
     IonTextarea
 } from '@ionic/vue';
-import axios from 'axios';
 import { defineComponent, ref } from 'vue'
 import ipaddress from '@/address'
+import {useCookies} from "vue3-cookies"
 
 export default defineComponent({
     setup(props) {
+        
+        const { cookies } = useCookies();
+
+        if(cookies.get("user_id") == undefined){
+            router.push("/signin")
+        }else{
+            console.log("ok")
+        }
+
         const title = ref(props.Title)
         const todo = ref()
         const desc = ref()
@@ -52,19 +61,18 @@ export default defineComponent({
 
         const insert = () =>{
             if(todo.value != null){
-                console.log(todo)
-                console.log(desc)
-                axios.post("http://"+ipaddress+":3000/zemi/insert", {
-                    Todo:todo.value,
-                    Desc:desc.value
-                })
+                console.log(todo.value)
+                console.log(desc.value)
+                const addr = "http://"+ipaddress+"/zemi/insert?Todo='"+todo.value+"'&Desc='"+desc.value+"'"
+                fetch(addr)
+                .then((res)=> res.json())
                 .then((response) =>{
-                    console.log(response)
+                    console.log("success:"+response)
                     alert("Todoを作成しました")
                     router.push("Todo")
                 })
                 .catch((error)=>{
-                    console.log(error)
+                    console.log("error:"+error)
                 })
             }else{
                 msg.value = "入力に不正があります"

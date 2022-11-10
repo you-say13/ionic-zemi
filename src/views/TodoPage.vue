@@ -49,6 +49,7 @@ import {
 import { defineComponent, ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import ipaddress from '@/address'
+import {useCookies} from "vue3-cookies"
 
 export default defineComponent({
     props:{
@@ -69,7 +70,17 @@ export default defineComponent({
         const comp_flag = ref(Boolean)
         const uncomp_flag = ref(Boolean)
 
-        const rout = useRouter()
+        const router = useRouter()
+
+        const { cookies } = useCookies();
+
+        console.log(cookies.get('user_id'))
+
+        if(cookies.get("user_id") == undefined){
+            router.push("/signin")
+        }else{
+            console.log("ok cookie is "+ cookies.get('user_id'))
+        }
 
         console.log(ipaddress)
 
@@ -78,7 +89,7 @@ export default defineComponent({
         })
 
         const allfetch = () =>{
-            fetch("http://"+ ipaddress +":3000/zemi/select")
+            fetch("http://"+ ipaddress +"/zemi/select")
             .then(response => {
                 return response.json()
             }).then(res =>{
@@ -91,7 +102,7 @@ export default defineComponent({
         }
         
         const intent = () =>{
-            rout.push("/createTodo")
+            router.push("/createTodo")
         }
 
         const complete_only = ()=>{
@@ -103,7 +114,7 @@ export default defineComponent({
         }
 
         const del = (todo_id: number, id:number) =>{
-            fetch("http://" + ipaddress + ":3000/zemi/delete?id="+todo_id)
+            fetch("http://" + ipaddress + "/zemi/delete?id="+todo_id)
                 .then(response=>{
                     return response
                 }).then(res=>{
@@ -117,7 +128,7 @@ export default defineComponent({
         }
 
         const upd = (todo_id: number, id:number) =>{
-            fetch("http://" + ipaddress + ":3000/zemi/update?id=" + todo_id)
+            fetch("http://" + ipaddress + "/zemi/update?id=" + todo_id)
                 .then(response=>{
                     return response
                 }).then(res=>{
@@ -132,7 +143,7 @@ export default defineComponent({
 
         const desc = (todo_id: number) =>{
             console.log(todo_id)
-            rout.push({
+            router.push({
                 name:'desc',
                 query:{id : todo_id},
             })

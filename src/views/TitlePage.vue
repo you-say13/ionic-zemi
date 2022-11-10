@@ -25,7 +25,7 @@ export default defineComponent({
     setup(){
         const router = useRouter()
         const mv = () =>{
-            router.push("/todo")
+            router.push('/signin')
         }
 
         return{
