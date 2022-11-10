@@ -64,7 +64,7 @@ export default defineComponent({
             if(todo.value != null){
                 console.log(todo.value)
                 console.log(desc.value)
-                const addr = "http://"+ipaddress+"/zemi/insert?Todo='"+todo.value+"'&Desc='"+desc.value+"'"
+                const addr = "http://"+ipaddress+"/zemi/insert?Todo="+todo.value+"&Desc="+desc.value+"&User="+cookies.get("user_id")
                 fetch(addr)
                 .then((response)=> response.json())
                 .then((res) =>{
@@ -74,6 +74,9 @@ export default defineComponent({
                         todo.value = ""
                         desc.value = ""
                         router.push("/Todo")
+                    }else{
+                        alert("バグっとンな")
+                        console.log("ここは通らないはず")
                     }
                 })
                 .catch((error)=>{

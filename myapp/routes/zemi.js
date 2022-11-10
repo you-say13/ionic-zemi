@@ -4,7 +4,6 @@ const mysql = require('mysql');
 const cors = require('cors');
 const cookieParser = require('cookie-parser')
 const { check, validationResult } = require('express-validator');
-const { isAPIResponseSuccess } = require('@ionic/cli');
 
 const con = mysql.createConnection({
   host: 'localhost',
@@ -35,11 +34,21 @@ router.use(cors());
 router.use(express.json())
 
 /* GET todo listing. */
-router.get('/select', function(req, res, next) {
-  con.query('select * from todo', function(error, results, fields){
-    if(error) throw error;
-    res.send(results)
-  });
+router.get('/select', [
+  check('user_id').not().isEmpty().isNumeric()
+],function(req, res, next) {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    res.send({message:"bad request", flag:-1})
+  }else{
+    const id = req.query.user_id
+    const q = 'select * from todo where userid=?'
+      con.query(q, [id], function(error, results, fields){
+        if(error) throw error;
+        res.send(results)
+      });
+  }
+
 });
 
 router.get('/desc', function(req,res,next){
@@ -75,6 +84,7 @@ router.get('/delete', function(req, res, next){
 router.get('/insert',[
   check('Todo').not().isEmpty().isLength({min:1, max:20}),
   check('Desc').isLength({min:0, max:100}),
+  check('user_id').not().isEmpty().isNumeric()
 ], function(req, res, next){
   const errors = validationResult(req);
 
@@ -83,15 +93,14 @@ router.get('/insert',[
   }else{
     const p_title = req.query.Todo
     const p_todo = req.query.Desc
-    console.log("request data:"+req)
+    const p_id = req.query.User
   
     const q = "insert into todo(title, todo, flag, date, userid) values (?, ?, 0, now(), ?);";
-    con.query(q ,[p_title, p_todo, req.cookies.username], (error, results, fields)=>{
-      console.log(fields)
-      if(error) throw error;
+    con.query(q ,[p_title, p_todo, p_id], (error, results, fields)=>{
       console.log("success to insert todo!!");
       res.send({message:"success to insert todo!!", flag:1})
     })
+    res.send({flag:100})
   }
 })
 //新規登録
