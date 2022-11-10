@@ -46,6 +46,7 @@ export default defineComponent({
     setup(props) {
         
         const { cookies } = useCookies();
+        const router = useRouter()
 
         if(cookies.get("user_id") == undefined){
             router.push("/signin")
@@ -58,8 +59,6 @@ export default defineComponent({
         const desc = ref()
         const img = ref("images/elephant_apng_zopfli.png")
         const msg = ref()
-
-        const router = useRouter()
 
         const insert = () =>{
             if(todo.value != null){

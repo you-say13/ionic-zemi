@@ -18,7 +18,7 @@
                 <ion-label>未達成のみ</ion-label>
             </ion-item>
             <ion-list v-for="(item, index) in todos" :key="item.todo_id">
-                <ion-item class="ion-text-center ion-padding-horizontal" style="border:solid; border-radius: 10px; color:#777777;">
+                <ion-item class="ion-text-center ion-padding-horizontal" >
                     <ion-label v-if="item.flag">
                         <div style="background-color:aqua">
                             <h1>{{map.get(item.flag)}}</h1>
