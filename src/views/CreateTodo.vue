@@ -64,8 +64,20 @@ export default defineComponent({
             if(todo.value != null){
                 console.log(todo.value)
                 console.log(desc.value)
-                const addr = "http://"+ipaddress+"/zemi/insert?Todo="+todo.value+"&Desc="+desc.value+"&User="+cookies.get("user_id")
-                fetch(addr)
+                const data = {
+                    title:todo.value,
+                    desc:desc.value,
+                    user_id:cookies.get('user_id')
+                    
+                }
+                const addr = "http://"+ipaddress+"/zemi/insert"
+                fetch(addr, {
+                    method:"POST",
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+                    body:JSON.stringify(data)
+                })
                 .then((response)=> response.json())
                 .then((res) =>{
                     if(res.flag==1){
