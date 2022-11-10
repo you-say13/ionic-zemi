@@ -37,8 +37,8 @@ import {
     IonInput,
     IonButton
 } from "@ionic/vue"
-import { defineComponent, ref } from "@vue/runtime-core"
-import { useRouter} from 'vue-router'
+import { defineComponent, onBeforeMount, ref } from "@vue/runtime-core"
+import { useRouter, useRoute} from 'vue-router'
 import { useField, useForm } from 'vee-validate'
 import { object, string } from 'yup';
 import ipaddress from '@/address'
@@ -49,14 +49,17 @@ export default defineComponent({
 
         //ルーターから無理やり遷移するときに使う
         const router = useRouter()
+        const route = useRoute()
 
         const { cookies } = useCookies();
 
-        if(cookies.get("user_id") == undefined){
-            console.log("ok")
-        }else{
-            router.push("/todo")
-        }
+        onBeforeMount(()=>{
+            if(cookies.get("user_id") == undefined){
+                console.log("ok")
+            }else{
+                router.push("/todo")
+            }
+        })
 
         const title = ref(props.Title);
 
@@ -90,14 +93,14 @@ export default defineComponent({
             fetch(addr)
             .then((res)=>res.json())
             .then((data)=>{
-                console.log(data.string)
                 if(data.string=="内容に間違いがあります"){
                     alert(data.string)
                     return
                 }else{
                     cookies.set('user_id', data.id, 60*60*24*7, "/")
-                    console.log("set cookie is "+data.id)
-                    alert(cookies.get('user_id'))
+                    pass.value = ""
+                    email.value = ""
+                    alert("ログイン成功")
                     router.push("/todo")
                 }
             })

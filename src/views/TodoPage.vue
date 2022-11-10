@@ -3,6 +3,7 @@
         <ion-header :translucent="true">
         <ion-toolbar>
             <ion-buttons>
+                <ion-button @click="logout" expand="round" class="ion-float-left">ログアウト</ion-button>
                 <ion-title>{{title}}</ion-title>
                 <ion-button @click="intent" expand="round" class="ion-float-right">Todo追加</ion-button>
             </ion-buttons>
@@ -115,10 +116,20 @@ export default defineComponent({
             })
         }
 
-        watch(route, () =>{
-            console.log("ルートが変わりました")
-            allfetch()
-        })
+        const logout = () =>{
+            cookies.remove('user_id')
+            if(cookies.get('user_id') == undefined){
+                alert("ログアウトしました")
+                router.push('/signin')
+            }else{
+                alert("ログアウトできませんでした")
+            }
+        }
+
+        // watch(route, () =>{
+        //     console.log("ルートが変わりました")
+        //     allfetch()
+        // })
         
         const intent = () =>{
             router.push("/createTodo")
@@ -181,6 +192,7 @@ export default defineComponent({
             del,
             upd,
             allfetch,
+            logout
         }
     },
     components:{
