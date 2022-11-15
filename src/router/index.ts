@@ -11,7 +11,7 @@ import Signin from '../views/SigninPage.vue';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/title'
+    redirect: '/signin'
   },
   {
     path: '/home',

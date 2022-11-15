@@ -76,8 +76,8 @@ router.get('/delete', function(req, res, next){
 })
 
 router.post('/insert', [
-  check('Todo').not().isEmpty().isLength({min:1, max:20}),
-  check('Desc').isLength({min:0, max:100}),
+  check('title').not().isEmpty().isLength({min:1, max:20}),
+  check('desc').isLength({min:0, max:100}),
   check('user_id').not().isEmpty().isNumeric()
 ], function(req, res){
   const errors = validationResult(req);

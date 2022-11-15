@@ -7,7 +7,7 @@
                 </ion-buttons>
             </ion-toolbar>
         </ion-header>
-        <ion-content class=" ion-padding-horizontal">
+        <ion-content class="ion-padding-horizontal">
             <ion-item>
                 <ion-label position="floating">Name</ion-label>
                 <ion-input minlength="1" maxlength="20" v-model="name"></ion-input>
