@@ -22,7 +22,7 @@
             </h1>
 
             <ion-list v-for="(item, index) in todos" :key="item.todo_id">
-                <ion-item class="ion-text-center ion-padding-horizontal" >
+                <ion-item class="ion-text-center" >
                     <ion-label v-if="item.flag">
                         <div style="background-color:aqua">
                             <h1>{{map.get(item.flag)}}</h1>
