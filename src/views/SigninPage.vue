@@ -8,19 +8,21 @@
             </ion-toolbar>
         </ion-header>
         <ion-content class="ion-padding-horizontal">
-            <ion-item>
-                <ion-label position="floating">Email</ion-label>
-                <ion-input minlength="1" maxlength="30" v-model="email"></ion-input>
-            </ion-item>
-            <div class="error">{{errors.email}}</div>
-            <ion-item>
-                <ion-label position="floating">Pass</ion-label>
-                <ion-input type="password" minlength="1" maxlength="12" v-model="pass"></ion-input>
-            </ion-item>
-            <div class="error">{{errors.pass}}</div>
-            <ion-button v-if="meta.valid" @click="signin" expand="round" class="ion-float-right">サインイン</ion-button>
-            <ion-button v-else @click="valid_alert" expand="round" class="ion-float-right">サインイン</ion-button>
-            <a href="/signup">新規登録</a>
+            <form>
+                <ion-item>
+                    <ion-label position="floating">Name</ion-label>
+                    <ion-input minlength="1" maxlength="30" v-model="name"></ion-input>
+                </ion-item>
+                <div class="error">{{errors.name}}</div>
+                <ion-item>
+                    <ion-label position="floating">Pass</ion-label>
+                    <ion-input type="password" minlength="1" maxlength="12" v-model="pass"></ion-input>
+                </ion-item>
+                <div class="error">{{errors.pass}}</div>
+                <ion-button v-if="meta.valid" @click="signin" expand="round" class="ion-float-right">サインイン</ion-button>
+                <ion-button v-else @click="valid_alert" expand="round" class="ion-float-right">サインイン</ion-button>
+                <a href="/signup">新規登録</a>
+            </form>
         </ion-content>
     </ion-page>
 </template>
@@ -43,6 +45,7 @@ import { useField, useForm } from 'vee-validate'
 import { object, string } from 'yup';
 import ipaddress from '@/address'
 import { useCookies } from "vue3-cookies";
+import { Buffer } from 'buffer'
 
 export default defineComponent({
     setup(props){
@@ -64,7 +67,7 @@ export default defineComponent({
 
         //vee validation用 制限の内容
         const setting = object({
-            email: string().required('必須項目です').email('メールアドレスの形式で入力してください').max(30),
+            name: string().required('必須項目です').min(1).max(20),
             pass: string().required('必須項目です').min(6).max(12),
         })
 
@@ -75,30 +78,45 @@ export default defineComponent({
         const { errors, meta } = useForm({
             validationSchema: setting,
             initialValues:{
-                email:'',
+                name:'',
                 pass:'',
             }
         })
 
         //vee validation用 監視対象を選択する
 
-        const {value:email} = useField('email');
+        const {value:name} = useField('name');
         const {value:pass} = useField('pass');
 
 
         //signinメソッド：ログイン用のデータをサーバに送り、返り値を待つ
         const signin = () =>{
-            const addr = "http://"+ipaddress+"/zemi/signin?email="+email.value+"&pass="+pass.value+"";
-            fetch(addr)
+            const data = {
+                name:name.value,
+                pass:pass.value,
+            }
+            const basic_a : string = name.value+":"+pass.value
+            const auth : string = btoa(basic_a)
+
+            const addr = "http://"+ipaddress+"/zemi/signin"
+            fetch(addr, {
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization':auth,
+                },
+                body:JSON.stringify(data)
+            })
             .then((res)=>res.json())
             .then((data)=>{
                 if(data.flag==0){
                     alert(data.message)
                     return
                 }else{
-                    cookies.set('user_id', data.id, 60*60*24*7, "/")
+                    const str = data.token.split('.')
+                    cookies.set('user_id', str[1], 60*60*24*7, "/")
                     pass.value = ""
-                    email.value = ""
+                    name.value = ""
                     alert(data.message)
                     router.push("/todo")
                 }
@@ -114,7 +132,7 @@ export default defineComponent({
             title,
             router,
             signin,
-            email, 
+            name, 
             pass, 
             errors,
             meta,
