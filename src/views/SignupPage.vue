@@ -8,29 +8,31 @@
             </ion-toolbar>
         </ion-header>
         <ion-content class="ion-padding-horizontal">
-            <ion-item>
-                <ion-label position="floating">Name</ion-label>
-                <ion-input minlength="1" maxlength="20" v-model="name"></ion-input>
-            </ion-item>
-            <div class="error">{{errors.name}}</div>
-            <ion-item>
-                <ion-label position="floating">Email</ion-label>
-                <ion-input minlength="1" maxlength="30" v-model="email"></ion-input>
-            </ion-item>
-            <div class="error">{{errors.email}}</div>
-            <ion-item>
-                <ion-label position="floating">Pass</ion-label>
-                <ion-input type="password" minlength="1" maxlength="12" v-model="pass"></ion-input>
-            </ion-item>
-            <div class="error">{{errors.pass}}</div>
-            <ion-item>
-                <ion-label position="floating">Re.Pass</ion-label>
-                <ion-input type="password" minlength="1" maxlength="12" v-model="repass"></ion-input>
-            </ion-item>
-            <div class="error">{{errors.repass}}</div>
-            <ion-button v-if="meta.valid" @click="signup" expand="round" class="ion-float-right">作成</ion-button>
-            <ion-button v-else @click="valid_alert" expand="round" class="ion-float-right">作成</ion-button>
-            <a href="/signin">ログイン画面へ</a>
+            <form>
+                <ion-item>
+                    <ion-label position="floating">Name</ion-label>
+                    <ion-input minlength="1" maxlength="20" v-model="name"></ion-input>
+                </ion-item>
+                <div class="error">{{errors.name}}</div>
+                <ion-item>
+                    <ion-label position="floating">Email</ion-label>
+                    <ion-input minlength="1" maxlength="30" v-model="email"></ion-input>
+                </ion-item>
+                <div class="error">{{errors.email}}</div>
+                <ion-item>
+                    <ion-label position="floating">Pass</ion-label>
+                    <ion-input type="password" minlength="1" maxlength="12" v-model="pass"></ion-input>
+                </ion-item>
+                <div class="error">{{errors.pass}}</div>
+                <ion-item>
+                    <ion-label position="floating">Re.Pass</ion-label>
+                    <ion-input type="password" minlength="1" maxlength="12" v-model="repass"></ion-input>
+                </ion-item>
+                <div class="error">{{errors.repass}}</div>
+                <ion-button v-if="meta.valid" @click="signup" expand="round" class="ion-float-right">作成</ion-button>
+                <ion-button v-else @click="valid_alert" expand="round" class="ion-float-right">作成</ion-button>
+                <a href="/signin">ログイン画面へ</a>
+            </form>
         </ion-content>
     </ion-page>
 </template>
@@ -102,8 +104,19 @@ export default defineComponent({
 
             console.log('pass signup')
 
-            const addr = "http://"+ipaddress+"/zemi/signup?name="+name.value+"&email="+email.value+"&pass="+pass.value+""
-            fetch(addr)
+            const data = {
+                name:name.value,
+                email:email.value,
+                pass:pass.value,
+            }
+            const addr = "http://"+ipaddress+"/zemi/signup"
+            fetch(addr, {
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(data)
+            })
             .then((res)=>res.json())
             .then((response)=>{
                 if(response.flag == 1){

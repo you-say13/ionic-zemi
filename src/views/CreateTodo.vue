@@ -47,11 +47,12 @@ export default defineComponent({
         
         const { cookies } = useCookies();
         const router = useRouter()
+        const auth_info = ref()
 
         if(cookies.get("user_id") == undefined){
             router.push("/signin")
         }else{
-            console.log("ok")
+            auth_info.value = atob(cookies.get('user_id'))
         }
 
         const title = ref(props.Title)
@@ -67,8 +68,7 @@ export default defineComponent({
                 const data = {
                     title:todo.value,
                     desc:desc.value,
-                    user_id:cookies.get('user_id')
-                    
+                    user_id:auth_info.value
                 }
                 const addr = "http://"+ipaddress+"/zemi/insert"
                 fetch(addr, {

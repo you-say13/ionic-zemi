@@ -85,29 +85,27 @@ export default defineComponent({
         const comp_flag = ref(Boolean)
         const uncomp_flag = ref(Boolean)
 
+        const auth_info = ref()
+
         const router = useRouter()
         const route = useRoute()
 
 
         const { cookies } = useCookies();
 
-        console.log(cookies.get('user_id'))
 
         if(cookies.get("user_id") == undefined){
             router.push("/signin")
         }else{
-            console.log("ok cookie is "+ cookies.get('user_id'))
+            auth_info.value = atob(cookies.get('user_id'))
         }
-
-
-        console.log(ipaddress)
 
         onMounted(()=>{
             allfetch()
         })
 
         const allfetch = () =>{
-            fetch("http://"+ ipaddress +"/zemi/select?user_id="+cookies.get("user_id"))
+            fetch("http://"+ ipaddress +"/zemi/select?user_id="+auth_info.value)
             .then(response => {
                 return response.json()
             }).then(res =>{
