@@ -61,16 +61,14 @@ import {
     IonCheckbox,
 
 } from '@ionic/vue';
-import { defineComponent, ref, reactive, onMounted, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router';
+import { defineComponent, ref, reactive, watchEffect } from 'vue'
+import { useRouter } from 'vue-router';
 import ipaddress from '@/address'
 import {useCookies} from "vue3-cookies"
 
 export default defineComponent({
     props:{
-        Title:{
-            type:String
-        }
+        Title: String
     },
     setup(props) {
         const title = ref(props.Title)
@@ -88,21 +86,14 @@ export default defineComponent({
         const auth_info = ref()
 
         const router = useRouter()
-        const route = useRoute()
-
 
         const { cookies } = useCookies();
-
 
         if(cookies.get("user_id") == undefined){
             router.push("/signin")
         }else{
             auth_info.value = atob(cookies.get('user_id'))
         }
-
-        onMounted(()=>{
-            allfetch()
-        })
 
         const allfetch = () =>{
             fetch("http://"+ ipaddress +"/zemi/select?user_id="+auth_info.value)
@@ -127,8 +118,7 @@ export default defineComponent({
             }
         }
 
-        watch(route, () =>{
-            console.log("ルートが変わりました")
+        watchEffect(()=>{
             allfetch()
         })
         

@@ -23,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/todo',
     name: 'todo',
     component: Todo,
-    props: {Title: "Todo"}
+    props: true
   },
   {
     path: '/title',

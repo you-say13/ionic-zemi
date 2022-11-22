@@ -19,7 +19,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
     IonPage,
     IonHeader,
@@ -30,9 +30,22 @@ import {
     IonTitle,
 } from '@ionic/vue'
 import ipaddress from '@/address'
+import { useCookies } from 'vue3-cookies'
 
 export default defineComponent({
     setup(props) {
+
+        const route = useRoute()
+        const router = useRouter()
+        const {cookies} = useCookies()
+
+        if(cookies.get("user_id") == undefined){
+            router.push("/signin")
+        }else{
+            return
+        }
+
+
         const title = ref(props.Title)
         const todos = ref([
             Number,
@@ -43,14 +56,7 @@ export default defineComponent({
         ])
 
         onMounted(() =>{
-            const route = useRoute()
-
-            console.log("show useRoute:" + route.path)
-
             const { id } = route.query
-
-            console.log("get routing id:"+id)
-
             fetch("http://"+ipaddress+"/zemi/desc?id=" + id)
                 .then(response=>{
                     return response.json()
