@@ -54,6 +54,10 @@ const routes: Array<RouteRecordRaw> = [
     component: Signin,
     props:{Title: "Signin"}
   },
+  {
+    path: '/:catchAll(.*)',
+    component: () => import("@/views/NotFoundPage.vue")
+  }
 
 ]
 
