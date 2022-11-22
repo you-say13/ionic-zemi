@@ -96,7 +96,19 @@ export default defineComponent({
         }
 
         const allfetch = () =>{
-            fetch("http://"+ ipaddress +"/zemi/select?user_id="+auth_info.value)
+            const url = "http://"+ipaddress+"/zemi/select"
+            const method = "POST"
+            const data = {
+                user_id : auth_info.value
+            };
+
+            fetch(url, {
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(data)
+            })
             .then(response => {
                 return response.json()
             }).then(res =>{
@@ -135,31 +147,51 @@ export default defineComponent({
         }
 
         const del = (todo_id: number, id:number) =>{
-            fetch("http://" + ipaddress + "/zemi/delete?id="+todo_id)
-                .then(response=>{
-                    return response
-                }).then(res=>{
-                    console.log(res)
-                    todos.value.splice(id, 1)
-                    alert("削除完了しました")
-                }).catch(err =>{
-                    console.log(err)
-                    alert("削除失敗しました")
-                })
+            const addr = "http://"+ipaddress+"/zemi/delete"
+            const data = {
+                todo_id: todo_id
+            }
+            fetch(addr, {
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(data)
+            })
+            .then(response=>{
+                return response
+            }).then(res=>{
+                console.log(res)
+                todos.value.splice(id, 1)
+                alert("削除完了しました")
+            }).catch(err =>{
+                console.log(err)
+                alert("削除失敗しました")
+            })
         }
 
         const upd = (todo_id: number, id:number) =>{
-            fetch("http://" + ipaddress + "/zemi/update?id=" + todo_id)
-                .then(response=>{
-                    return response
-                }).then(res=>{
-                    console.log("response:"+res+" and index number:"+id)
-                    allfetch()
-                    alert("TODOを達成しました")
-                }).catch(err=>{
-                    console.log(err)
-                    alert("達成に変更できませんでした")
-                })
+            const addr = "http://"+ipaddress+"/zemi/update"
+            const data = {
+                todo_id : todo_id
+            }
+            fetch(addr, {
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(data)
+            })
+            .then(response=>{
+                return response
+            }).then(res=>{
+                console.log("response:"+res+" and index number:"+id)
+                allfetch()
+                alert("TODOを達成しました")
+            }).catch(err=>{
+                console.log(err)
+                alert("達成に変更できませんでした")
+            })
         }
 
         const desc = (todo_id: number) =>{

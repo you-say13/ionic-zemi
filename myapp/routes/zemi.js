@@ -30,14 +30,14 @@ con.connect((err) =>{
 
 
 /* GET todo listing. */
-router.get('/select', [
+router.post('/select', [
   check('user_id').not().isEmpty().isNumeric()
 ],function(req, res, next) {
   const errors = validationResult(req);
   if(!errors.isEmpty()){
     res.send({message:"bad request", flag:-1})
   }else{
-    const id = req.query.user_id
+    const id = req.body.user_id
     const q = 'select * from todo where userid=?'
       con.query(q, [id], function(error, results, fields){
         if(error) throw error;
@@ -47,8 +47,10 @@ router.get('/select', [
 
 });
 
-router.get('/desc', function(req,res,next){
-  const id = req.query.id
+router.post('/desc',[
+  check('todo_id').not().isEmpty().isNumeric()
+], function(req,res,next){
+  const id = req.body.todo_id
   console.log("request param:"+id)
   const q = "select * from todo where todo_id=?;"
   con.query(q, [id], (err, results, fields)=>{
@@ -59,18 +61,22 @@ router.get('/desc', function(req,res,next){
   })
 })
 
-router.get('/update', function(req, res, next){
+router.post('/update', [
+  check('todo_id').not().isEmpty().isNumeric()
+],function(req, res, next){
   const q = "update todo set flag = 1 where todo_id=?;";
-  con.query(q, [req.query.id], (err, results, fields)=>{
+  con.query(q, [req.body.todo_id], (err, results, fields)=>{
     if(err)throw err;
     console.log("success update flag!");
     res.send(results)
   })
 })
 
-router.get('/delete', function(req, res, next){
+router.post('/delete',[
+  check('todo_id').not().isEmpty().isNumeric()
+], function(req, res, next){
   const q = "delete from todo where todo_id=?;";
-  con.query(q, [req.query.id], (err, results, fields)=>{
+  con.query(q, [req.body.todo_id], (err, results, fields)=>{
     if(err)throw err;
     console.log("success delete flag!");
     res.send(results)
