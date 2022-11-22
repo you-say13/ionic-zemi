@@ -137,7 +137,8 @@ router.post('/signup', [
 })
 //ログイン
 router.post('/signin',function(req, res, next){
-  if(!req.headers.authorization){
+  try{
+      if(!req.headers.authorization){
     console.log("unAuthorize...")
     return res.send({message:"unAuthorize", flag:-1})
   }else{
@@ -165,6 +166,10 @@ router.post('/signin',function(req, res, next){
       return res.send({message:"ログインしました", flag:1, token})
     }
   })
+  }catch(err){
+    console.log(err)
+  }
+
 })
 
 module.exports = router;

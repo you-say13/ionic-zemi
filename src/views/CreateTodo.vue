@@ -48,6 +48,7 @@ export default defineComponent({
         const { cookies } = useCookies();
         const router = useRouter()
         const auth_info = ref()
+        const flag = ref(Boolean)
 
         if(cookies.get("user_id") == undefined){
             router.push("/signin")
@@ -63,6 +64,7 @@ export default defineComponent({
 
         const insert = () =>{
             if(todo.value != null){
+                auth_info.value = atob(cookies.get('user_id'))
                 console.log(todo.value)
                 console.log(desc.value)
                 const data = {
@@ -87,7 +89,7 @@ export default defineComponent({
                         desc.value = ""
                         router.push("/Todo")
                     }else{
-                        alert("バグっとンな")
+                        alert("不正な内容が含まれています")
                         console.log("ここは通らないはず")
                     }
                 })
@@ -99,17 +101,12 @@ export default defineComponent({
             }
         }
 
-        const back = () =>{
-            router.push("Todo");
-        }
-
         return{
             title,
             desc,
             todo,
             img,
             insert,
-            back,
             msg
         }
     },

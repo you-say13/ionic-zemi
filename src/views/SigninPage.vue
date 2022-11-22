@@ -45,7 +45,6 @@ import { useField, useForm } from 'vee-validate'
 import { object, string } from 'yup';
 import ipaddress from '@/address'
 import { useCookies } from "vue3-cookies";
-import { Buffer } from 'buffer'
 
 export default defineComponent({
     setup(props){
@@ -59,7 +58,7 @@ export default defineComponent({
             if(cookies.get("user_id") == undefined){
                 console.log("ok")
             }else{
-                router.push("/todo")
+                router.push({name:"todo", params: {title: "Todo"}})
             }
         })
 
@@ -96,7 +95,7 @@ export default defineComponent({
                 pass:pass.value,
             }
             const basic_a : string = name.value+":"+pass.value
-            const auth : string = btoa(basic_a)
+            const auth : string = btoa(unescape(encodeURIComponent(basic_a)))
 
             const addr = "http://"+ipaddress+"/zemi/signin"
             fetch(addr, {
