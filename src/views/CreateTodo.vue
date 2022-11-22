@@ -48,7 +48,6 @@ export default defineComponent({
         const { cookies } = useCookies();
         const router = useRouter()
         const auth_info = ref()
-        const flag = ref(Boolean)
 
         if(cookies.get("user_id") == undefined){
             router.push("/signin")

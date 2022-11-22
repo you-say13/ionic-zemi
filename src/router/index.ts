@@ -3,7 +3,6 @@ import { RouteRecordRaw } from 'vue-router';
 import HomePage from '../views/HomePage.vue'
 import Todo from '../views/TodoPage.vue';
 import Create from '../views/CreateTodo.vue';
-import Desc from '../views/TodoDesc.vue';
 import Signup from '../views/SignupPage.vue';
 import Signin from '../views/SigninPage.vue';
 
@@ -35,12 +34,6 @@ const routes: Array<RouteRecordRaw> = [
     name: 'create',
     component: Create,
     props: {Title: "CreateTodo"}
-  },
-  {
-    path: '/desc',
-    name: 'desc',
-    component: Desc,
-    props:{Title: "Desc"}
   },
   {
     path: '/signup',

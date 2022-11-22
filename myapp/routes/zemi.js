@@ -47,10 +47,10 @@ router.post('/select', [
 
 });
 
-router.post('/desc',[
-  check('todo_id').not().isEmpty().isNumeric()
+router.post('/desc', [
+  check('id').not().isEmpty().isNumeric()
 ], function(req,res,next){
-  const id = req.body.todo_id
+  const id = req.body.id
   console.log("request param:"+id)
   const q = "select * from todo where todo_id=?;"
   con.query(q, [id], (err, results, fields)=>{
