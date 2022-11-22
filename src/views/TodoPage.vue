@@ -41,7 +41,6 @@
                         <ion-buttons style="color: #1e90ff;" class="ion-float-center">
                             <ion-button @click="del(item.todo_id, index)">削除</ion-button>
                             <ion-button @click="upd(item.todo_id, index)">達成</ion-button>
-                            <ion-button @click="desc(item.todo_id)">詳細</ion-button>
                         </ion-buttons>
                     </ion-label>
                 </ion-item>
@@ -51,6 +50,9 @@
 </template>
 <script lang="ts">
 import { 
+    IonButton,
+    IonButtons,
+    IonItem,
     IonContent, 
     IonHeader, 
     IonPage, 
@@ -61,14 +63,18 @@ import {
     IonCheckbox,
 
 } from '@ionic/vue';
-import { defineComponent, ref, reactive, watchEffect } from 'vue'
-import { useRouter } from 'vue-router';
+import { defineComponent, ref, reactive, watchEffect, watch, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router';
 import ipaddress from '@/address'
 import {useCookies} from "vue3-cookies"
 
 export default defineComponent({
     props:{
-        Title: String
+        Title: String,
+        flag:{
+            type:Number,
+            default: 0
+        },
     },
     setup(props) {
         const title = ref(props.Title)
@@ -80,12 +86,14 @@ export default defineComponent({
             Boolean,
             Date
         ])
+        const flag = ref(props.flag)
         const comp_flag = ref(Boolean)
         const uncomp_flag = ref(Boolean)
 
         const auth_info = ref()
 
         const router = useRouter()
+        const route = useRoute()
 
         const { cookies } = useCookies();
 
@@ -97,7 +105,6 @@ export default defineComponent({
 
         const allfetch = () =>{
             const url = "http://"+ipaddress+"/zemi/select"
-            const method = "POST"
             const data = {
                 user_id : auth_info.value
             };
@@ -130,7 +137,11 @@ export default defineComponent({
             }
         }
 
-        watchEffect(()=>{
+        watch(route, () =>{
+            allfetch()
+        })
+
+        onMounted(() =>{
             allfetch()
         })
         
@@ -227,6 +238,9 @@ export default defineComponent({
         IonList,
         IonLabel,
         IonCheckbox,
+        IonButton,
+        IonButtons,
+        IonItem,
     }
 })
 </script>

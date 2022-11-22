@@ -9,11 +9,11 @@
             </ion-toolbar>
         </ion-header>
         <ion-content class="ion-text-center">
-            <h1>タイトル:{{todos.title}}</h1>
+            <!-- <h1>タイトル:{{todos.title}}</h1>
             <p>Todo番号:{{todos.todo_id}}</p>
             <p>内容:{{todos.todo}}</p>
             <p>進捗:{{todos.flag}}</p>
-            <p>日付:{{todos.date}}</p>
+            <p>日付:{{todos.date}}</p> -->
         </ion-content>
     </ion-page>
 </template>
@@ -38,6 +38,7 @@ export default defineComponent({
         const route = useRoute()
         const router = useRouter()
         const {cookies} = useCookies()
+        const tid = ref(props.id)
 
         if(cookies.get("user_id") == undefined){
             router.push("/signin")
@@ -56,13 +57,15 @@ export default defineComponent({
         ])
 
         onMounted(() =>{
-            const { id } = route.query
             const addr = "http://"+ipaddress+"/zemi/desc"
             const data = {
-                id:id
+                id:tid
             }
             fetch(addr, {
                 method:"POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
                 body: JSON.stringify(data)
             })
             .then(response=>{
@@ -70,6 +73,7 @@ export default defineComponent({
             }).then(res =>{
                 console.log(res[0])
                 todos.value = res[0]
+                console.log(todos.value)
             }).catch((err)=>{
                 console.log(err)
             })
@@ -83,6 +87,9 @@ export default defineComponent({
     props:{
         Title:{
             type:String
+        },
+        id:{
+            type:Number
         }
     },
     components:{
