@@ -57,15 +57,22 @@ export default defineComponent({
 
         onMounted(() =>{
             const { id } = route.query
-            fetch("http://"+ipaddress+"/zemi/desc?id=" + id)
-                .then(response=>{
-                    return response.json()
-                }).then(res =>{
-                    console.log(res[0])
-                    todos.value = res[0]
-                }).catch((err)=>{
-                    console.log(err)
-                })
+            const addr = "http://"+ipaddress+"/zemi/desc"
+            const data = {
+                id:id
+            }
+            fetch(addr, {
+                method:"POST",
+                body: JSON.stringify(data)
+            })
+            .then(response=>{
+                return response.json()
+            }).then(res =>{
+                console.log(res[0])
+                todos.value = res[0]
+            }).catch((err)=>{
+                console.log(err)
+            })
         })
 
         return {
