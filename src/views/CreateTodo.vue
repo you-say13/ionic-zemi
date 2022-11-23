@@ -61,6 +61,7 @@ export default defineComponent({
         const img = ref("images/elephant_apng_zopfli.png")
         const msg = ref()
 
+        //todoのinsertをpostで飛ばすための関数
         const insert = () =>{
             if(todo.value != null){
                 auth_info.value = atob(cookies.get('user_id'))
