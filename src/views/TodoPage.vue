@@ -11,6 +11,10 @@
         </ion-header>
     
         <ion-content :fullscreen="true">
+            <IonItem>
+                <ion-searchbar color="light" v-model="search"></ion-searchbar>
+                <IonButton expand="round" @click="search">search</IonButton>
+            </IonItem>
 
             <ion-item>
                 <ion-checkbox v-model="comp_flag.value" @change="complete_only()"></ion-checkbox>
@@ -61,6 +65,7 @@ import {
     IonList,
     IonLabel,
     IonCheckbox,
+    IonSearchbar,
 
 } from '@ionic/vue';
 import { defineComponent, ref, reactive, watchEffect, watch, onMounted } from 'vue'
@@ -79,6 +84,7 @@ export default defineComponent({
     setup(props) {
         const title = ref(props.Title)
         const map = reactive(new Map([[0, "未達"],[1, "達成"]]))
+        const search = ref("")
         const todos = ref([
             Number,
             String,
@@ -97,12 +103,17 @@ export default defineComponent({
 
         const { cookies } = useCookies();
 
+        //cookieがセットされていない場合signinページへ飛ばすための分岐
         if(cookies.get("user_id") == undefined){
             router.push("/signin")
         }else{
             auth_info.value = atob(cookies.get('user_id'))
         }
 
+        console.log(search.value)
+
+        //post通信を行う部分
+        //その１：取得
         const allfetch = () =>{
             const url = "http://"+ipaddress+"/zemi/select"
             const data = {
@@ -127,36 +138,7 @@ export default defineComponent({
             })
         }
 
-        const logout = () =>{
-            cookies.remove('user_id')
-            if(cookies.get('user_id') == undefined){
-                alert("ログアウトしました")
-                router.push('/signin')
-            }else{
-                alert("ログアウトできませんでした")
-            }
-        }
-
-        watch(route, () =>{
-            allfetch()
-        })
-
-        onMounted(() =>{
-            allfetch()
-        })
-        
-        const intent = () =>{
-            router.push("/createTodo")
-        }
-
-        const complete_only = ()=>{
-            console.log("complete_only:" + comp_flag.value)
-        }
-
-        const uncomplete_only = () =>{
-            console.log("uncomplete_only" + uncomp_flag.value)
-        }
-
+        //その２：削除
         const del = (todo_id: number, id:number) =>{
             const addr = "http://"+ipaddress+"/zemi/delete"
             const data = {
@@ -181,6 +163,7 @@ export default defineComponent({
             })
         }
 
+        //その３：更新 
         const upd = (todo_id: number, id:number) =>{
             const addr = "http://"+ipaddress+"/zemi/update"
             const data = {
@@ -205,13 +188,47 @@ export default defineComponent({
             })
         }
 
-        const desc = (todo_id: number) =>{
-            console.log(todo_id)
-            router.push({
-                name:'desc',
-                query:{id : todo_id},
-            })
+        //ここでcookieデータを削除しログアウトする
+        const logout = () =>{
+            cookies.remove('user_id')
+            if(cookies.get('user_id') == undefined){
+                alert("ログアウトしました")
+                router.push('/signin')
+            }else{
+                alert("ログアウトできませんでした")
+            }
         }
+
+        //Todo作成後などライフサイクルに変化がないときにデータを再取得するための監視関数
+        watch(route, () =>{
+            allfetch()
+        })
+        //ライフサイクルに変化があったとき(再描画等)に呼び出される関数
+        onMounted(() =>{
+            allfetch()
+        })
+
+        //createTodoへの遷移用関数
+        const intent = () =>{
+            router.push("/createTodo")
+        }
+
+        //後々作る予定の達成未達成を絞り込めるようにするフラグ関数
+        const complete_only = ()=>{
+            console.log("complete_only:" + comp_flag.value)
+        }
+
+        const uncomplete_only = () =>{
+            console.log("uncomplete_only" + uncomp_flag.value)
+        }
+
+        // const desc = (todo_id: number) =>{
+        //     console.log(todo_id)
+        //     router.push({
+        //         name:'desc',
+        //         query:{id : todo_id},
+        //     })
+        // }
 
         return{
             title,
@@ -222,11 +239,12 @@ export default defineComponent({
             uncomplete_only,
             comp_flag,
             uncomp_flag,
-            desc,
+            //desc,
             del,
             upd,
             allfetch,
-            logout
+            logout,
+            search,
         }
     },
     components:{
@@ -241,6 +259,7 @@ export default defineComponent({
         IonButton,
         IonButtons,
         IonItem,
+        IonSearchbar,
     }
 })
 </script>
