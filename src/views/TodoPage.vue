@@ -16,10 +16,22 @@
                 <ion-button expand="round" @click="search">search</ion-button>
             </ion-item> -->
             <ion-item>
-                <ion-checkbox v-model="comp_flag" @click="!comp_flag.value"></ion-checkbox>
-                <ion-label>達成済みのみ</ion-label>
-                <ion-checkbox v-model="uncomp_flag" @click="!uncomp_flag.value"></ion-checkbox>
-                <ion-label>未達成のみ</ion-label>
+                <ion-item>
+                    <ion-checkbox v-model="comp_flag" @click="!comp_flag.value"></ion-checkbox>
+                    <ion-label>達成済みのみ</ion-label>
+                </ion-item>
+                <ion-item>
+                    <ion-checkbox v-model="uncomp_flag" @click="!uncomp_flag.value"></ion-checkbox>
+                    <ion-label>未達成のみ</ion-label>
+                </ion-item>
+                <ion-item>
+                    <ion-checkbox></ion-checkbox>
+                    <ion-label>昇順</ion-label>
+                </ion-item>
+                <ion-item>
+                    <ion-checkbox></ion-checkbox>
+                    <ion-label>降順</ion-label>
+                </ion-item>
             </ion-item>
             <h1 class="ion-text-align">
             </h1>
@@ -84,6 +96,7 @@ export default defineComponent({
         const title = ref(props.Title)
         const map = reactive(new Map([[0, "未達"],[1, "達成"]]))
         const search = ref("")
+        const todo_desc = ref("desc")
         const todos = ref([
             Number,
             String,
@@ -92,8 +105,14 @@ export default defineComponent({
             Date
         ])
         //const flag = ref(props.flag)
+
+        //各sort機能のflag変数
+        //>>>>
         const comp_flag = ref(false)
         const uncomp_flag = ref(false)
+        const desc = ref(true)
+        const asc = ref(false)
+        //<<<<
 
         const auth_info = ref()
 
@@ -103,16 +122,19 @@ export default defineComponent({
         const { cookies } = useCookies();
 
         //cookieがセットされていない場合signinページへ飛ばすための分岐
+        //>>>>
         if(cookies.get("user_id") == undefined){
             router.push("/signin")
         }else{
             auth_info.value = atob(cookies.get('user_id'))
         }
+        //<<<<
 
         console.log(search.value)
 
         //post通信を行う部分
         //その１：取得
+        //>>>>
         const allfetch = () =>{
             const url = "http://"+ipaddress+"/zemi/select"
             const data = {
@@ -136,6 +158,7 @@ export default defineComponent({
                 console.log("occurred error:" + error)
             })
         }
+        //<<<<
 
         //その２：削除
         const del = (todo_id: number, id:number) =>{
@@ -275,7 +298,7 @@ export default defineComponent({
         IonButtons,
         IonItem,
         // IonSearchbar,
-        IonCheckbox
+        IonCheckbox,
     }
 })
 </script>
