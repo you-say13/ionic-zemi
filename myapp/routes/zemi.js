@@ -52,7 +52,7 @@ router.post('/desc', [
 ], function(req,res,next){
   const id = req.body.id
   console.log("request param:"+id)
-  const q = "select * from todo where todo_id=?;"
+  const q = "select * from todo where todo_id=? order by todo_id desc;"
   con.query(q, [id], (err, results, fields)=>{
     console.log("desc results:"+results)
     if(err) throw err;
@@ -113,7 +113,7 @@ router.post('/insert', [
 router.post("/prog",function(req, res){
   const flag = req.body.flag
   const id = req.body.user_id
-  const q = "select * from todo where userid=? and flag=?"
+  const q = "select * from todo where userid=? and flag=? order by todo_id desc"
 
   con.query(q, [id, flag], (err, results, fields)=>{
     if(err) throw err;
