@@ -180,6 +180,8 @@ export default defineComponent({
                 return response
             }).then(res=>{
                 console.log("response:"+res+" and index number:"+id)
+                comp_flag.value = false
+                uncomp_flag.value = false
                 allfetch()
                 alert("TODOを達成しました")
             }).catch(err=>{
@@ -247,45 +249,18 @@ export default defineComponent({
             .catch((err)=>console.error(err))
         }
 
-        // //後々作る予定の達成未達成を絞り込めるようにするフラグ関数
-        // const complete_only = ()=>{
-        //     console.log("complete_only:" + comp_flag.value)
-        // }
-
-        // const checkbox_search = () =>{
-        //     comp_flag.value = !comp_flag.value
-        //     console.log("complete_only:" + comp_flag.value)
-        //     console.log("uncomplete_only" + uncomp_flag.value)
-        // }
-
-        // const uncomplete_only = () =>{
-        //     console.log("uncomplete_only" + uncomp_flag.value)
-        // }
-
-        // const desc = (todo_id: number) =>{
-        //     console.log(todo_id)
-        //     router.push({
-        //         name:'desc',
-        //         query:{id : todo_id},
-        //     })
-        // }
-
         return{
             title,
             map,
             todos,
             intent,
-            //complete_only,
-            //uncomplete_only,
             comp_flag,
             uncomp_flag,
-            //desc,
             del,
             upd,
             allfetch,
             logout,
             search,
-            //checkbox_search,
             progress,
         }
     },
