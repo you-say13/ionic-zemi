@@ -110,6 +110,17 @@ router.post('/insert', [
   }
 })
 
+router.post("/prog",function(req, res){
+  const flag = req.body.flag
+  const id = req.body.user_id
+  const q = "select * from todo where userid=? and flag=?"
+
+  con.query(q, [id, flag], (err, results, fields)=>{
+    if(err) throw err;
+    res.send(results)
+  })
+})
+
 
 //新規登録
 router.post('/signup', [

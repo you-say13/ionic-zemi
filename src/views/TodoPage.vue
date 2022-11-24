@@ -11,15 +11,14 @@
         </ion-header>
     
         <ion-content :fullscreen="true">
-            <IonItem>
-                <ion-searchbar color="light" v-model="search"></ion-searchbar>
-                <IonButton expand="round" @click="search">search</IonButton>
-            </IonItem>
-
             <ion-item>
-                <ion-checkbox v-model="comp_flag.value" @change="complete_only()"></ion-checkbox>
+                <ion-searchbar color="light" v-model="search"></ion-searchbar>
+                <ion-button expand="round" @click="search">search</ion-button>
+            </ion-item>
+            <ion-item>
+                <ion-checkbox v-model="comp_flag" @click="!comp_flag.value"></ion-checkbox>
                 <ion-label>達成済みのみ</ion-label>
-                <ion-checkbox v-model="uncomp_flag.value" @change="uncomplete_only()"></ion-checkbox>
+                <ion-checkbox v-model="uncomp_flag" @click="!uncomp_flag.value"></ion-checkbox>
                 <ion-label>未達成のみ</ion-label>
             </ion-item>
             <h1 class="ion-text-align">
@@ -64,14 +63,15 @@ import {
     IonToolbar, 
     IonList,
     IonLabel,
-    IonCheckbox,
     IonSearchbar,
+    IonCheckbox,
 
 } from '@ionic/vue';
-import { defineComponent, ref, reactive, watchEffect, watch, onMounted } from 'vue'
+import { defineComponent, ref, reactive, watch, onMounted, watchEffect } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import ipaddress from '@/address'
 import {useCookies} from "vue3-cookies"
+import { Method } from 'ionicons/dist/types/stencil-public-runtime';
 
 export default defineComponent({
     props:{
@@ -92,9 +92,9 @@ export default defineComponent({
             Boolean,
             Date
         ])
-        const flag = ref(props.flag)
-        const comp_flag = ref(Boolean)
-        const uncomp_flag = ref(Boolean)
+        //const flag = ref(props.flag)
+        const comp_flag = ref(false)
+        const uncomp_flag = ref(false)
 
         const auth_info = ref()
 
@@ -213,14 +213,54 @@ export default defineComponent({
             router.push("/createTodo")
         }
 
-        //後々作る予定の達成未達成を絞り込めるようにするフラグ関数
-        const complete_only = ()=>{
-            console.log("complete_only:" + comp_flag.value)
+        watchEffect(() => {
+            console.log(comp_flag.value)
+            allfetch()
+            if(comp_flag.value && uncomp_flag.value){
+                allfetch()
+            }else if(comp_flag.value){
+                progress(1)
+                console.log("fetch予定 comp")
+            }else if(uncomp_flag.value){
+                progress(0)
+                console.log("fetch予定 uncomp")
+            }
+        })
+
+        const progress = (flag : number) =>{
+            const addr:string = "http://"+ipaddress+"/zemi/prog"
+            const data = {
+                flag : flag,
+                user_id : auth_info.value
+            }
+            fetch(addr, {
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(data)
+            })
+            .then((response)=> response.json())
+            .then((res)=>{
+                todos.value = res
+            })
+            .catch((err)=>console.error(err))
         }
 
-        const uncomplete_only = () =>{
-            console.log("uncomplete_only" + uncomp_flag.value)
-        }
+        // //後々作る予定の達成未達成を絞り込めるようにするフラグ関数
+        // const complete_only = ()=>{
+        //     console.log("complete_only:" + comp_flag.value)
+        // }
+
+        // const checkbox_search = () =>{
+        //     comp_flag.value = !comp_flag.value
+        //     console.log("complete_only:" + comp_flag.value)
+        //     console.log("uncomplete_only" + uncomp_flag.value)
+        // }
+
+        // const uncomplete_only = () =>{
+        //     console.log("uncomplete_only" + uncomp_flag.value)
+        // }
 
         // const desc = (todo_id: number) =>{
         //     console.log(todo_id)
@@ -235,8 +275,8 @@ export default defineComponent({
             map,
             todos,
             intent,
-            complete_only,
-            uncomplete_only,
+            //complete_only,
+            //uncomplete_only,
             comp_flag,
             uncomp_flag,
             //desc,
@@ -245,6 +285,8 @@ export default defineComponent({
             allfetch,
             logout,
             search,
+            //checkbox_search,
+            progress,
         }
     },
     components:{
@@ -255,11 +297,11 @@ export default defineComponent({
         IonToolbar,
         IonList,
         IonLabel,
-        IonCheckbox,
         IonButton,
         IonButtons,
         IonItem,
         IonSearchbar,
+        IonCheckbox
     }
 })
 </script>
