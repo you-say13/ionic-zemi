@@ -38,7 +38,7 @@ router.post('/select', [
     res.send({message:"bad request", flag:-1})
   }else{
     const id = req.body.user_id
-    const q = 'select * from todo where userid=?'
+    const q = 'select * from todo where userid=? order by todo_id desc'
       con.query(q, [id], function(error, results, fields){
         if(error) throw error;
         res.send(results)

@@ -11,10 +11,10 @@
         </ion-header>
     
         <ion-content :fullscreen="true">
-            <ion-item>
+            <!-- <ion-item>
                 <ion-searchbar color="light" v-model="search"></ion-searchbar>
                 <ion-button expand="round" @click="search">search</ion-button>
-            </ion-item>
+            </ion-item> -->
             <ion-item>
                 <ion-checkbox v-model="comp_flag" @click="!comp_flag.value"></ion-checkbox>
                 <ion-label>達成済みのみ</ion-label>
@@ -63,7 +63,7 @@ import {
     IonToolbar, 
     IonList,
     IonLabel,
-    IonSearchbar,
+    // IonSearchbar,
     IonCheckbox,
 
 } from '@ionic/vue';
@@ -71,7 +71,6 @@ import { defineComponent, ref, reactive, watch, onMounted, watchEffect } from 'v
 import { useRouter, useRoute } from 'vue-router';
 import ipaddress from '@/address'
 import {useCookies} from "vue3-cookies"
-import { Method } from 'ionicons/dist/types/stencil-public-runtime';
 
 export default defineComponent({
     props:{
@@ -275,7 +274,7 @@ export default defineComponent({
         IonButton,
         IonButtons,
         IonItem,
-        IonSearchbar,
+        // IonSearchbar,
         IonCheckbox
     }
 })
