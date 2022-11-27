@@ -39,12 +39,12 @@
             <ion-list v-for="(item, index) in todos" :key="item.todo_id">
                 <ion-item class="ion-text-center" >
                     <ion-label v-if="item.flag">
-                        <div style="background-color:aqua">
+                        <div id="comp" style="background-color:aqua">
                             <h1>{{map.get(item.flag)}}</h1>
                         </div>
                     </ion-label>
                     <ion-label v-else>
-                        <div style="background-color:orangered">
+                        <div id="uncomp" style="background-color:orangered">
                             <h1>{{map.get(item.flag)}}</h1>
                         </div>
                     </ion-label>
@@ -55,7 +55,8 @@
                     <ion-label>
                         <ion-buttons style="color: #1e90ff;" class="ion-float-center">
                             <ion-button @click="del(item.todo_id, index)">削除</ion-button>
-                            <ion-button @click="upd(item.todo_id, index)">達成</ion-button>
+                            <ion-button v-if="!item.flag" @click="upd(item.todo_id, item.flag, index)">達成へ</ion-button>
+                            <ion-button v-else @click="upd(item.todo_id, item.flag, index)">未達成へ</ion-button>
                         </ion-buttons>
                     </ion-label>
                 </ion-item>
@@ -104,7 +105,6 @@ export default defineComponent({
             Boolean,
             Date
         ])
-        //const flag = ref(props.flag)
 
         //各sort機能のflag変数
         //>>>>
@@ -186,10 +186,11 @@ export default defineComponent({
         }
 
         //その３：更新 
-        const upd = (todo_id: number, id:number) =>{
+        const upd = (todo_id: number, flag:boolean, id:number) =>{
             const addr = "http://"+ipaddress+"/zemi/update"
             const data = {
-                todo_id : todo_id
+                todo_id : todo_id,
+                flag : flag
             }
             fetch(addr, {
                 method:"POST",
@@ -205,7 +206,7 @@ export default defineComponent({
                 comp_flag.value = false
                 uncomp_flag.value = false
                 allfetch()
-                alert("TODOを達成しました")
+                alert("TODOの達成状況を変更しました")
             }).catch(err=>{
                 console.log(err)
                 alert("達成に変更できませんでした")
