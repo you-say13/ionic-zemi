@@ -50,37 +50,65 @@ router.post('/select', [
 router.post('/desc', [
   check('id').not().isEmpty().isNumeric()
 ], function(req,res,next){
-  const id = req.body.id
-  console.log("request param:"+id)
-  const q = "select * from todo where todo_id=? order by todo_id desc;"
-  con.query(q, [id], (err, results, fields)=>{
-    console.log("desc results:"+results)
-    if(err) throw err;
-    console.log("success to get desc!!")
-    res.send(results)
-  })
+  const errors = validationResult(req);
+
+  console.log(req.body.title)
+
+  if(!errors.isEmpty()){
+    res.send({message:"bad request", flag:-1})
+  }else{
+    const id = req.body.id
+    console.log("request param:"+id)
+    const q = "select * from todo where todo_id=? order by todo_id desc;"
+    con.query(q, [id], (err, results, fields)=>{
+      console.log("desc results:"+results)
+      if(err) throw err;
+      console.log("success to get desc!!")
+      res.send(results)
+    })
+  }
 })
 
 router.post('/update', [
-  check('todo_id').not().isEmpty().isNumeric()
+  check('todo_id').not().isEmpty().isNumeric(),
+  check('flag').not().isEmpty().isBoolean()
 ],function(req, res, next){
-  const q = "update todo set flag = 1 where todo_id=?;";
-  con.query(q, [req.body.todo_id], (err, results, fields)=>{
-    if(err)throw err;
-    console.log("success update flag!");
-    res.send(results)
-  })
+
+  const errors = validationResult(req);
+
+  if(!errors.isEmpty()){
+    res.send({message:"bad request", flag:-1})
+  }else{
+    var flag = req.body.flag
+    if(flag){
+      flag = 0
+    }else{
+      flag = 1
+    }
+    const q = "update todo set flag = ? where todo_id=?;";
+    con.query(q, [flag, req.body.todo_id], (err, results, fields)=>{
+      if(err)throw err;
+      console.log("success update flag!");
+      res.send(results)
+    })
+  }
 })
 
 router.post('/delete',[
   check('todo_id').not().isEmpty().isNumeric()
 ], function(req, res, next){
-  const q = "delete from todo where todo_id=?;";
-  con.query(q, [req.body.todo_id], (err, results, fields)=>{
-    if(err)throw err;
-    console.log("success delete flag!");
-    res.send(results)
-  })
+  const errors = validationResult(req);
+
+  if(!errors.isEmpty()){
+    res.send({message:"bad request", flag:-1})
+  }else{
+    const q = "delete from todo where todo_id=?;";
+    con.query(q, [req.body.todo_id], (err, results, fields)=>{
+      if(err)throw err;
+      console.log("success delete flag!");
+      res.send(results)
+    })
+  }
 })
 
 router.post('/insert', [
