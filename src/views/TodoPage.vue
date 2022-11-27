@@ -25,11 +25,11 @@
                     <ion-label>未達成のみ</ion-label>
                 </ion-item>
                 <ion-item>
-                    <ion-checkbox></ion-checkbox>
+                    <ion-checkbox v-model="desc"></ion-checkbox>
                     <ion-label>昇順</ion-label>
                 </ion-item>
                 <ion-item>
-                    <ion-checkbox></ion-checkbox>
+                    <ion-checkbox v-model="asc"></ion-checkbox>
                     <ion-label>降順</ion-label>
                 </ion-item>
             </ion-item>
@@ -278,6 +278,8 @@ export default defineComponent({
             intent,
             comp_flag,
             uncomp_flag,
+            desc,
+            asc,
             del,
             upd,
             allfetch,
