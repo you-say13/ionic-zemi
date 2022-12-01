@@ -11,10 +11,6 @@
         </ion-header>
     
         <ion-content :fullscreen="true">
-            <!-- <ion-item>
-                <ion-searchbar color="light" v-model="search"></ion-searchbar>
-                <ion-button expand="round" @click="search">search</ion-button>
-            </ion-item> -->
             <ion-item>
                 <ion-item>
                     <ion-checkbox v-model="comp_flag" @click="!comp_flag.value"></ion-checkbox>
@@ -35,32 +31,37 @@
             </ion-item>
             <h1 class="ion-text-align">
             </h1>
-
-            <ion-list v-for="(item, index) in todos" :key="item.todo_id">
-                <ion-item class="ion-text-center" >
-                    <ion-label v-if="item.flag">
-                        <div id="comp" style="background-color:aqua">
-                            <h1>{{map.get(item.flag)}}</h1>
-                        </div>
-                    </ion-label>
-                    <ion-label v-else>
-                        <div id="uncomp" style="background-color:orangered">
-                            <h1>{{map.get(item.flag)}}</h1>
-                        </div>
-                    </ion-label>
-                    <ion-label>
-                        <h1 style="color: #000000;">{{item.title}}</h1>
-                        <p style="color: #000000;">{{item.todo}}</p>
-                    </ion-label>
-                    <ion-label>
-                        <ion-buttons style="color: #1e90ff;" class="ion-float-center">
-                            <ion-button @click="del(item.todo_id, index)">削除</ion-button>
-                            <ion-button v-if="!item.flag" @click="upd(item.todo_id, item.flag, index)">達成へ</ion-button>
-                            <ion-button v-else @click="upd(item.todo_id, item.flag, index)">未達成へ</ion-button>
-                        </ion-buttons>
-                    </ion-label>
-                </ion-item>
-            </ion-list>
+            <ion-grid>
+                <ion-row>
+                    <ion-col size="4" v-for="(item, index) in todos" :key="item.todo_id">
+                        <ion-card>
+                            <ion-card-header>
+                                <ion-card-subtitle v-if="item.flag">
+                                    <p style="background-color:aqua; color:black;">{{map.get(item.flag)}}</p>
+                                    {{item.date}}
+                                </ion-card-subtitle>
+                                <ion-card-subtitle v-else>
+                                    <p style="background-color:orangered; color:black;">{{map.get(item.flag)}}</p>
+                                    {{item.date}}
+                                </ion-card-subtitle>
+                                <ion-card-title>
+                                    <ion-item lines="none">{{item.title}}</ion-item>
+                                </ion-card-title>
+                                <ion-card-content>
+                                    <ion-item lines="none" style="color:gray;">{{item.todo}}</ion-item>
+                                    <ion-label>
+                                        <ion-buttons style="color: #1e90ff;" class="ion-float-center">
+                                            <ion-button @click="del(item.todo_id, index)">削除</ion-button>
+                                            <ion-button v-if="!item.flag" @click="upd(item.todo_id, item.flag, index)">達成へ</ion-button>
+                                            <ion-button v-else @click="upd(item.todo_id, item.flag, index)">未達成へ</ion-button>
+                                        </ion-buttons>
+                                    </ion-label>
+                                </ion-card-content>
+                            </ion-card-header>
+                        </ion-card>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
         </ion-content>
     </ion-page>
 </template>
@@ -74,10 +75,16 @@ import {
     IonPage, 
     IonTitle, 
     IonToolbar, 
-    IonList,
     IonLabel,
-    // IonSearchbar,
     IonCheckbox,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonGrid,
+    IonRow,
+    IonCol
 
 } from '@ionic/vue';
 import { defineComponent, ref, reactive, watch, onMounted, watchEffect } from 'vue'
@@ -97,7 +104,6 @@ export default defineComponent({
         const title = ref(props.Title)
         const map = reactive(new Map([[0, "未達"],[1, "達成"]]))
         const search = ref("")
-        const todo_desc = ref("desc")
         const todos = ref([
             Number,
             String,
@@ -295,13 +301,19 @@ export default defineComponent({
         IonPage,
         IonTitle,
         IonToolbar,
-        IonList,
         IonLabel,
         IonButton,
         IonButtons,
         IonItem,
-        // IonSearchbar,
         IonCheckbox,
+        IonCard,
+        IonCardContent,
+        IonCardHeader,
+        IonCardTitle,
+        IonCardSubtitle,
+        IonGrid,
+        IonRow,
+        IonCol,
     }
 })
 </script>
