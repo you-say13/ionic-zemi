@@ -118,8 +118,6 @@ router.post('/insert', [
 ], function(req, res){
   const errors = validationResult(req);
 
-  console.log(req.body.title)
-
   if(!errors.isEmpty()){
     res.send({message:"bad request", flag:-1})
   }else{
@@ -128,10 +126,15 @@ router.post('/insert', [
     const p_todo = req.body.desc || ""
     const p_id = req.body.user_id
 
-    console.log(p_todo)
+    con.query("select * from user where user_id", (error, results)=>{
+      if(error){
+        res.send({message:"userid is undefined", flag:-1})
+      }
+    })
   
     const q = "insert into todo(title, todo, flag, date, userid) values (?, ?, 0, now(), ?);";
     con.query(q ,[p_title, p_todo, p_id], (error, results, fields)=>{
+      if(error) throw error;
       console.log("success to insert todo!!");
       res.send({message:"success to insert todo!!", flag:1})
     })
@@ -166,9 +169,11 @@ router.post('/signup', [
     const email = req.body.email
     const pass = req.body.pass
 
-    var q = "select username from user where name=?;";
+    var q = "select name from user where name=?;";
     con.query(q, [name], (err, results, fields)=>{
-      if(results == name){
+      console.log("check:"+results[0].name)
+      console.log("check input:"+name)
+      if(results[0].name == name){
         res.send({message:"同一名が存在しますので変更してください", flag:0})
       }else{
         q = "insert into user (name, email, password, date) values(?, ?, ?, now())"
