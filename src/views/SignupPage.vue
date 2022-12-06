@@ -120,10 +120,15 @@ export default defineComponent({
             .then((res)=>res.json())
             .then((response)=>{
                 if(response.flag == 1){
+                    name.value = ""
+                    email.value = ""
+                    pass.value = ""
+                    repass.value = ""
                     alert("ユーザ登録完了!")
                     router.push("/signin")
                 }else{
-                    alert("不正な入力が送られました、攻撃を停止してください")
+                    alert(response.message)
+                    name.value = ""
                 }
 
             })

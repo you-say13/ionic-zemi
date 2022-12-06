@@ -38,7 +38,8 @@ router.post('/select', [
     res.send({message:"bad request", flag:-1})
   }else{
     const id = req.body.user_id
-    const q = 'select * from todo where userid=? order by todo_id desc'
+    const desc = req.body.desc
+    const q = 'select * from todo where userid=? order by todo_id ' + desc;
       con.query(q, [id], function(error, results, fields){
         if(error) throw error;
         res.send(results)
@@ -95,7 +96,7 @@ router.post('/update', [
 })
 
 router.post('/delete',[
-  check('todo_id').not().isEmpty().isNumeric()
+  check('todo_id').not().isEmpty().isNumeric(),
 ], function(req, res, next){
   const errors = validationResult(req);
 
@@ -114,11 +115,9 @@ router.post('/delete',[
 router.post('/insert', [
   check('title').not().isEmpty().isLength({min:1, max:20}),
   check('desc').isLength({min:0, max:100}),
-  check('user_id').not().isEmpty().isNumeric()
 ], function(req, res){
+  console.log(req.body.user_id)
   const errors = validationResult(req);
-
-  console.log(req.body.title)
 
   if(!errors.isEmpty()){
     res.send({message:"bad request", flag:-1})
@@ -126,12 +125,18 @@ router.post('/insert', [
 
     const p_title = req.body.title
     const p_todo = req.body.desc || ""
-    const p_id = req.body.user_id
+    const p_id = atob(req.body.user_id)
 
-    console.log(p_todo)
+
+    con.query("select * from user where user_id = ?",[p_id], (error, results)=>{
+      if(error){
+        res.send({message:"userid is undefined", flag:-1})
+      }
+    })
   
     const q = "insert into todo(title, todo, flag, date, userid) values (?, ?, 0, now(), ?);";
     con.query(q ,[p_title, p_todo, p_id], (error, results, fields)=>{
+      if(error) throw error;
       console.log("success to insert todo!!");
       res.send({message:"success to insert todo!!", flag:1})
     })
@@ -140,9 +145,10 @@ router.post('/insert', [
 
 router.post("/prog",function(req, res){
   const flag = req.body.flag
-  const id = req.body.user_id
-  const q = "select * from todo where userid=? and flag=? order by todo_id desc"
-
+  const id = req.body.userid
+  const desc = req.body.desc
+  const q = "select * from todo where userid=? and flag=? order by todo_id "+desc;
+  console.log(q)
   con.query(q, [id, flag], (err, results, fields)=>{
     if(err) throw err;
     res.send(results)
@@ -166,9 +172,11 @@ router.post('/signup', [
     const email = req.body.email
     const pass = req.body.pass
 
-    var q = "select username from user where name=?;";
+    var q = "select name from user where name=?;";
     con.query(q, [name], (err, results, fields)=>{
-      if(results == name){
+      console.log("check:"+results[0].name)
+      console.log("check input:"+name)
+      if(results[0].name == name){
         res.send({message:"同一名が存在しますので変更してください", flag:0})
       }else{
         q = "insert into user (name, email, password, date) values(?, ?, ?, now())"

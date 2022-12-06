@@ -65,12 +65,10 @@ export default defineComponent({
         const insert = () =>{
             if(todo.value != null){
                 auth_info.value = atob(cookies.get('user_id'))
-                console.log(todo.value)
-                console.log(desc.value)
                 const data = {
                     title:todo.value,
                     desc:desc.value,
-                    user_id:auth_info.value
+                    user_id:btoa(auth_info.value)
                 }
                 const addr = "http://"+ipaddress+"/zemi/insert"
                 fetch(addr, {
