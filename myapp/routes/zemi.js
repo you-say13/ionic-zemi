@@ -38,7 +38,8 @@ router.post('/select', [
     res.send({message:"bad request", flag:-1})
   }else{
     const id = req.body.user_id
-    const q = 'select * from todo where userid=? order by todo_id desc'
+    const desc = req.body.desc
+    const q = 'select * from todo where userid=? order by todo_id ' + desc;
       con.query(q, [id], function(error, results, fields){
         if(error) throw error;
         res.send(results)
@@ -95,7 +96,7 @@ router.post('/update', [
 })
 
 router.post('/delete',[
-  check('todo_id').not().isEmpty().isNumeric()
+  check('todo_id').not().isEmpty().isNumeric(),
 ], function(req, res, next){
   const errors = validationResult(req);
 
@@ -114,8 +115,8 @@ router.post('/delete',[
 router.post('/insert', [
   check('title').not().isEmpty().isLength({min:1, max:20}),
   check('desc').isLength({min:0, max:100}),
-  check('user_id').not().isEmpty().isNumeric()
 ], function(req, res){
+  console.log(req.body.user_id)
   const errors = validationResult(req);
 
   if(!errors.isEmpty()){
@@ -124,9 +125,10 @@ router.post('/insert', [
 
     const p_title = req.body.title
     const p_todo = req.body.desc || ""
-    const p_id = req.body.user_id
+    const p_id = atob(req.body.user_id)
 
-    con.query("select * from user where user_id", (error, results)=>{
+
+    con.query("select * from user where user_id = ?",[p_id], (error, results)=>{
       if(error){
         res.send({message:"userid is undefined", flag:-1})
       }
@@ -143,9 +145,10 @@ router.post('/insert', [
 
 router.post("/prog",function(req, res){
   const flag = req.body.flag
-  const id = req.body.user_id
-  const q = "select * from todo where userid=? and flag=? order by todo_id desc"
-
+  const id = req.body.userid
+  const desc = req.body.desc
+  const q = "select * from todo where userid=? and flag=? order by todo_id "+desc;
+  console.log(q)
   con.query(q, [id, flag], (err, results, fields)=>{
     if(err) throw err;
     res.send(results)

@@ -12,28 +12,36 @@
     
         <ion-content :fullscreen="true">
             <ion-item>
-                <ion-item>
-                    <ion-checkbox v-model="comp_flag" @click="!comp_flag.value"></ion-checkbox>
-                    <ion-label>達成済みのみ</ion-label>
-                </ion-item>
-                <ion-item>
-                    <ion-checkbox v-model="uncomp_flag" @click="!uncomp_flag.value"></ion-checkbox>
-                    <ion-label>未達成のみ</ion-label>
-                </ion-item>
-                <ion-item>
-                    <ion-checkbox v-model="desc"></ion-checkbox>
-                    <ion-label>昇順</ion-label>
-                </ion-item>
-                <ion-item>
-                    <ion-checkbox v-model="asc"></ion-checkbox>
-                    <ion-label>降順</ion-label>
-                </ion-item>
+                <ion-radio-group allow-empty-selection v-model="comp_flag">
+                    <ion-item lines="none">
+                        <ion-item lines="none"> 
+                            <ion-radio value=1></ion-radio>
+                            <ion-label>達成済みのみ</ion-label>
+                        </ion-item>
+                        <ion-item lines="none">
+                            <ion-radio value=0></ion-radio>
+                            <ion-label>未達成のみ</ion-label>
+                        </ion-item>
+                    </ion-item>
+                </ion-radio-group>
+                <ion-radio-group v-model="desc">
+                    <ion-item lines="none">
+                        <ion-item lines="none">
+                            <ion-radio value="desc"></ion-radio>
+                            <ion-label>降順</ion-label>
+                        </ion-item>
+                        <ion-item lines="none">
+                            <ion-radio value="asc"></ion-radio>
+                            <ion-label>昇順</ion-label>
+                        </ion-item>
+                    </ion-item>
+                </ion-radio-group>
             </ion-item>
             <h1 class="ion-text-align">
             </h1>
             <ion-grid>
                 <ion-row>
-                    <ion-col size="4" v-for="(item, index) in todos" :key="item.todo_id">
+                    <ion-col size="12" v-for="(item, index) in todos" :key="item.todo_id">
                         <ion-card>
                             <ion-card-header>
                                 <ion-card-subtitle v-if="item.flag">
@@ -76,7 +84,8 @@ import {
     IonTitle, 
     IonToolbar, 
     IonLabel,
-    IonCheckbox,
+    IonRadio,
+    IonRadioGroup,
     IonCard,
     IonCardContent,
     IonCardHeader,
@@ -114,10 +123,8 @@ export default defineComponent({
 
         //各sort機能のflag変数
         //>>>>
-        const comp_flag = ref(false)
-        const uncomp_flag = ref(false)
-        const desc = ref(true)
-        const asc = ref(false)
+        const comp_flag = ref()
+        const desc = ref("desc")
         //<<<<
 
         const auth_info = ref()
@@ -144,7 +151,8 @@ export default defineComponent({
         const allfetch = () =>{
             const url = "http://"+ipaddress+"/zemi/select"
             const data = {
-                user_id : auth_info.value
+                user_id : auth_info.value,
+                desc : desc.value
             };
 
             fetch(url, {
@@ -196,7 +204,7 @@ export default defineComponent({
             const addr = "http://"+ipaddress+"/zemi/update"
             const data = {
                 todo_id : todo_id,
-                flag : flag
+                flag : flag,
             }
             fetch(addr, {
                 method:"POST",
@@ -209,8 +217,6 @@ export default defineComponent({
                 return response
             }).then(res=>{
                 console.log("response:"+res+" and index number:"+id)
-                comp_flag.value = false
-                uncomp_flag.value = false
                 allfetch()
                 alert("TODOの達成状況を変更しました")
             }).catch(err=>{
@@ -245,14 +251,12 @@ export default defineComponent({
         }
 
         watchEffect(() => {
-            console.log(comp_flag.value)
-            allfetch()
-            if(comp_flag.value && uncomp_flag.value){
+            if(comp_flag.value == undefined){
                 allfetch()
-            }else if(comp_flag.value){
+            }else if(comp_flag.value == "1"){
                 progress(1)
                 console.log("fetch予定 comp")
-            }else if(uncomp_flag.value){
+            }else if(comp_flag.value == "0"){
                 progress(0)
                 console.log("fetch予定 uncomp")
             }
@@ -262,7 +266,8 @@ export default defineComponent({
             const addr:string = "http://"+ipaddress+"/zemi/prog"
             const data = {
                 flag : flag,
-                user_id : auth_info.value
+                userid : auth_info.value,
+                desc : desc.value
             }
             fetch(addr, {
                 method:"POST",
@@ -284,9 +289,7 @@ export default defineComponent({
             todos,
             intent,
             comp_flag,
-            uncomp_flag,
             desc,
-            asc,
             del,
             upd,
             allfetch,
@@ -305,7 +308,8 @@ export default defineComponent({
         IonButton,
         IonButtons,
         IonItem,
-        IonCheckbox,
+        IonRadio,
+        IonRadioGroup,
         IonCard,
         IonCardContent,
         IonCardHeader,

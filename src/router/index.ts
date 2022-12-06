@@ -6,7 +6,6 @@ import Create from '../views/CreateTodo.vue';
 import Signup from '../views/SignupPage.vue';
 import Signin from '../views/SigninPage.vue';
 
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
