@@ -70,6 +70,7 @@ export default defineComponent({
                     desc:desc.value,
                     user_id:btoa(auth_info.value)
                 }
+                console.log(auth_info.value)
                 const addr = "http://"+ipaddress+"/zemi/insert"
                 fetch(addr, {
                     method:"POST",

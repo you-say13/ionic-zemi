@@ -112,7 +112,8 @@ export default defineComponent({
                     alert(data.message)
                     return
                 }else{
-                    cookies.set('user_data', data.token, 60*60*24*7, "/")
+                    const id = btoa(data.id)
+                    cookies.set('user_id', id, 60*60*24*7, "/")
                     pass.value = ""
                     name.value = ""
                     alert(data.message)

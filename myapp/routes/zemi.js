@@ -3,29 +3,12 @@ const router = express.Router();
 const mysql = require('mysql');
 const cors = require('cors');
 const bodyParser = require('body-parser')
+const rate = require('express-rate-limit');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-const redis = require('redis')
-const session = require('express-session')
 //const addr = require('../../src/address')
-const RedisStore = require('connect-redis')(session);
-const redisClient = redis.createClient('redis://localhost:6379');
 router.use(cors());
 router.use(express.json())
-
-router.use(
-  session({
-    name: 'redis-test-ionic-and-vue',
-    secret: 'ionic-vue-zemi',
-    resave: false,
-    saveUninitialized: false,
-    store: new RedisStore({ client: redisClient}),
-    cookie:{
-      secure: false,
-      httpOnly: false
-    }
-  })
-)
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
@@ -45,6 +28,15 @@ con.connect((err) =>{
   }
   console.log('success to connection mysql server!!')
 });
+
+const limit = rate({
+  windowMs: 1000,
+  max: 2,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+router.use(limit);
 
 
 /* GET todo listing. */
@@ -189,9 +181,7 @@ router.post('/signup', [
 
     var q = "select name from user where name=?;";
     con.query(q, [name], (err, results, fields)=>{
-      console.log("check:"+results[0].name)
-      console.log("check input:"+name)
-      if(results[0].name == name){
+      if(results[0] != undefined){
         res.send({message:"同一名が存在しますので変更してください", flag:0})
       }else{
         q = "insert into user (name, email, password, date) values(?, ?, ?, now())"
@@ -231,6 +221,7 @@ router.post('/signin',function(req, res, next){
         pass: str[1],
       }
       const token = jwt.sign(payload, "ionic-zemi-secret-key")
+      console.log(results[0].user_id)
       return res.send({message:"ログインしました", flag:1, token, id:results[0].user_id})
     }
   })
