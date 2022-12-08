@@ -177,15 +177,12 @@ export default defineComponent({
         //その２：削除
         const del = (todo_id: number, id:number) =>{
             const addr = "http://"+ipaddress+"/zemi/delete"
-            const data = {
-                todo_id: todo_id
-            }
             fetch(addr, {
                 method:"POST",
                 headers:{
-                    'Content-Type':'application/json'
+                    'Content-Type':'application/json',
+                    'Set-Cookie':auth_info.value +"="+ todo_id
                 },
-                body:JSON.stringify(data)
             })
             .then(response=>{
                 return response

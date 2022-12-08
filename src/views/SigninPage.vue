@@ -112,8 +112,7 @@ export default defineComponent({
                     alert(data.message)
                     return
                 }else{
-                    const str = data.token.split('.')
-                    cookies.set('user_id', str[1], 60*60*24*7, "/")
+                    cookies.set('user_data', data.token, 60*60*24*7, "/")
                     pass.value = ""
                     name.value = ""
                     alert(data.message)

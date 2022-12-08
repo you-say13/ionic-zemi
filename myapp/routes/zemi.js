@@ -5,9 +5,27 @@ const cors = require('cors');
 const bodyParser = require('body-parser')
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const redis = require('redis')
+const session = require('express-session')
+//const addr = require('../../src/address')
+const RedisStore = require('connect-redis')(session);
+const redisClient = redis.createClient('redis://localhost:6379');
 router.use(cors());
 router.use(express.json())
 
+router.use(
+  session({
+    name: 'redis-test-ionic-and-vue',
+    secret: 'ionic-vue-zemi',
+    resave: false,
+    saveUninitialized: false,
+    store: new RedisStore({ client: redisClient}),
+    cookie:{
+      secure: false,
+      httpOnly: false
+    }
+  })
+)
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
@@ -95,21 +113,18 @@ router.post('/update', [
   }
 })
 
-router.post('/delete',[
-  check('todo_id').not().isEmpty().isNumeric(),
-], function(req, res, next){
-  const errors = validationResult(req);
+router.post('/delete',function(req, res, next){
 
-  if(!errors.isEmpty()){
-    res.send({message:"bad request", flag:-1})
-  }else{
-    const q = "delete from todo where todo_id=?;";
-    con.query(q, [req.body.todo_id], (err, results, fields)=>{
-      if(err)throw err;
-      console.log("success delete flag!");
-      res.send(results)
-    })
+  if(str[0].length > 1 || str[1] == undefined){
+    return res.status(444).send({message:"bad request(id)", flag:-1})
   }
+
+  const q = "delete from todo where todo_id=? and userid=? ;";
+  con.query(q, [todo_id, id], (err, results, fields)=>{
+    if(err)throw err;
+    console.log("success delete flag!");
+    res.send(results)
+  })
 })
 
 router.post('/insert', [
@@ -215,8 +230,8 @@ router.post('/signin',function(req, res, next){
         name: str[0],
         pass: str[1],
       }
-      const token = jwt.sign(results[0].user_id, "ionic-zemi-secret-key")
-      return res.send({message:"ログインしました", flag:1, token})
+      const token = jwt.sign(payload, "ionic-zemi-secret-key")
+      return res.send({message:"ログインしました", flag:1, token, id:results[0].user_id})
     }
   })
   }catch(err){
