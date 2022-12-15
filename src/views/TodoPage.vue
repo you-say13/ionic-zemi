@@ -1,42 +1,45 @@
 <template>
     <ion-page>
         <ion-header :translucent="true">
-        <ion-toolbar>
-            <ion-buttons>
-                <ion-button @click="logout" expand="round" class="ion-float-left">ログアウト</ion-button>
-                <ion-title>{{title}}</ion-title>
-                <ion-button @click="intent" expand="round" class="ion-float-right">Todo追加</ion-button>
-            </ion-buttons>
-        </ion-toolbar>
+            <ion-toolbar>
+                <ion-buttons>
+                    <ion-button @click="logout" expand="round" class="ion-float-left">ログアウト</ion-button>
+                    <ion-title>ToDo</ion-title>
+                    <ion-button @click="intent" expand="round" class="ion-float-right">Todo追加</ion-button>
+                </ion-buttons>            
+            </ion-toolbar>
+            <ion-toolbar>
+                <ion-item>
+                    <ion-radio-group allow-empty-selection v-model="comp_flag">
+                        <ion-item lines="none">
+                            <ion-item lines="none"> 
+                                <ion-radio value=1></ion-radio>
+                                <ion-label>既達</ion-label>
+                            </ion-item>
+                            <ion-item lines="none">
+                                <ion-radio value=0></ion-radio>
+                                <ion-label>未達</ion-label>
+                            </ion-item>
+                        </ion-item>
+                    </ion-radio-group>
+                </ion-item>
+                <ion-item>
+                    <ion-radio-group v-model="desc">
+                        <ion-item lines="none">
+                            <ion-item lines="none">
+                                <ion-radio value="desc"></ion-radio>
+                                <ion-label>降順</ion-label>
+                            </ion-item>
+                            <ion-item lines="none">
+                                <ion-radio value="asc"></ion-radio>
+                                <ion-label>昇順</ion-label>
+                            </ion-item>
+                        </ion-item>
+                    </ion-radio-group>
+                </ion-item>
+            </ion-toolbar>
         </ion-header>
-    
         <ion-content :fullscreen="true">
-            <ion-item>
-                <ion-radio-group allow-empty-selection v-model="comp_flag">
-                    <ion-item lines="none">
-                        <ion-item lines="none"> 
-                            <ion-radio value=1></ion-radio>
-                            <ion-label>達成済みのみ</ion-label>
-                        </ion-item>
-                        <ion-item lines="none">
-                            <ion-radio value=0></ion-radio>
-                            <ion-label>未達成のみ</ion-label>
-                        </ion-item>
-                    </ion-item>
-                </ion-radio-group>
-                <ion-radio-group v-model="desc">
-                    <ion-item lines="none">
-                        <ion-item lines="none">
-                            <ion-radio value="desc"></ion-radio>
-                            <ion-label>降順</ion-label>
-                        </ion-item>
-                        <ion-item lines="none">
-                            <ion-radio value="asc"></ion-radio>
-                            <ion-label>昇順</ion-label>
-                        </ion-item>
-                    </ion-item>
-                </ion-radio-group>
-            </ion-item>
             <h1 class="ion-text-align">
             </h1>
             <ion-grid>
@@ -93,10 +96,10 @@ import {
     IonCardSubtitle,
     IonGrid,
     IonRow,
-    IonCol
+    IonCol,
 
 } from '@ionic/vue';
-import { defineComponent, ref, reactive, watch, onMounted, watchEffect } from 'vue'
+import { defineComponent, ref, reactive, watch, watchEffect } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import ipaddress from '@/address'
 import {useCookies} from "vue3-cookies"
@@ -148,14 +151,13 @@ export default defineComponent({
         //post通信を行う部分
         //その１：取得
         //>>>>
-        const allfetch = () =>{
+        const allfetch = async () =>{
             const url = "http://"+ipaddress+"/zemi/select"
             const data = {
                 user_id : auth_info.value,
                 desc : desc.value
-            };
-
-            fetch(url, {
+            }
+            await fetch(url, {
                 method:"POST",
                 headers:{
                     'Content-Type':'application/json'
@@ -165,27 +167,30 @@ export default defineComponent({
             .then(response => {
                 return response.json()
             }).then(res =>{
-                todos.value = res
-
+                if(res.message == "error"){
+                    alert("アクセス回数が多すぎます。少し時間をおいて下さい")
+                }else{
+                    todos.value = res
+                }
             })
             .catch((error)=>{
                 console.log("occurred error:" + error)
             })
         }
-        //<<<<
 
         //その２：削除
         const del = (todo_id: number, id:number) =>{
             const addr = "http://"+ipaddress+"/zemi/delete"
             const data = {
-                todo_id: todo_id
+                todo_id : todo_id,
+                user_id : auth_info.value
             }
             fetch(addr, {
                 method:"POST",
                 headers:{
-                    'Content-Type':'application/json'
+                    'Content-Type':'application/json',
                 },
-                body:JSON.stringify(data)
+                body: JSON.stringify(data)
             })
             .then(response=>{
                 return response
@@ -240,25 +245,21 @@ export default defineComponent({
         watch(route, () =>{
             allfetch()
         })
-        //ライフサイクルに変化があったとき(再描画等)に呼び出される関数
-        onMounted(() =>{
-            allfetch()
-        })
-
         //createTodoへの遷移用関数
         const intent = () =>{
             router.push("/createTodo")
         }
 
         watchEffect(() => {
-            if(comp_flag.value == undefined){
-                allfetch()
-            }else if(comp_flag.value == "1"){
+            if(comp_flag.value == "1"){
                 progress(1)
                 console.log("fetch予定 comp")
             }else if(comp_flag.value == "0"){
                 progress(0)
                 console.log("fetch予定 uncomp")
+            }else if(comp_flag.value == undefined && comp_flag.value == null){
+                allfetch()
+                console.log(comp_flag.value)
             }
         })
 

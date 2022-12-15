@@ -112,8 +112,8 @@ export default defineComponent({
                     alert(data.message)
                     return
                 }else{
-                    const str = data.token.split('.')
-                    cookies.set('user_id', str[1], 60*60*24*7, "/")
+                    const id = btoa(data.id)
+                    cookies.set('user_id', id, 60*60*24*7, "/")
                     pass.value = ""
                     name.value = ""
                     alert(data.message)

@@ -3,11 +3,12 @@ const router = express.Router();
 const mysql = require('mysql');
 const cors = require('cors');
 const bodyParser = require('body-parser')
+const rate = require('express-rate-limit');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+//const addr = require('../../src/address')
 router.use(cors());
 router.use(express.json())
-
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
@@ -27,6 +28,24 @@ con.connect((err) =>{
   }
   console.log('success to connection mysql server!!')
 });
+
+// const limit = rate({
+//   windowMs: 1000 * 60,
+//   max: 100,
+//   standardHeaders: true,
+//   legacyHeaders: false
+// });
+
+const customlimit = rate({
+  windowMs: 1000*60,
+  max: 100,
+  message: {message: "error"},
+  statusCode: 444,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+router.use(customlimit);
 
 
 /* GET todo listing. */
@@ -95,21 +114,24 @@ router.post('/update', [
   }
 })
 
-router.post('/delete',[
+router.post('/delete', [
   check('todo_id').not().isEmpty().isNumeric(),
-], function(req, res, next){
+  check('user_id').not().isEmpty().isNumeric(),
+],function(req, res, next){
   const errors = validationResult(req);
 
   if(!errors.isEmpty()){
-    res.send({message:"bad request", flag:-1})
-  }else{
-    const q = "delete from todo where todo_id=?;";
-    con.query(q, [req.body.todo_id], (err, results, fields)=>{
-      if(err)throw err;
-      console.log("success delete flag!");
-      res.send(results)
-    })
+    return res.status(400).send({message:"bad request", flag:-1})
   }
+
+  const todo_id = req.body.todo_id
+  const id = req.body.user_id;
+  const q = "delete from todo where todo_id=? and userid=? ;";
+  con.query(q, [todo_id, id], (err, results, fields)=>{
+    if(err)throw err;
+    console.log("success delete flag!");
+    res.send(results)
+  })
 })
 
 router.post('/insert', [
@@ -174,9 +196,7 @@ router.post('/signup', [
 
     var q = "select name from user where name=?;";
     con.query(q, [name], (err, results, fields)=>{
-      console.log("check:"+results[0].name)
-      console.log("check input:"+name)
-      if(results[0].name == name){
+      if(results[0] != undefined){
         res.send({message:"同一名が存在しますので変更してください", flag:0})
       }else{
         q = "insert into user (name, email, password, date) values(?, ?, ?, now())"
@@ -215,8 +235,9 @@ router.post('/signin',function(req, res, next){
         name: str[0],
         pass: str[1],
       }
-      const token = jwt.sign(results[0].user_id, "ionic-zemi-secret-key")
-      return res.send({message:"ログインしました", flag:1, token})
+      const token = jwt.sign(payload, "ionic-zemi-secret-key")
+      console.log(results[0].user_id)
+      return res.send({message:"ログインしました", flag:1, token, id:results[0].user_id})
     }
   })
   }catch(err){
