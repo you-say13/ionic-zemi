@@ -1,4 +1,4 @@
-const ipaddress = process.env.IP || "localhost:3000" 
+const ipaddress = process.env.IP || "10.200.0.214:3000" 
 export{
     ipaddress as default
 }

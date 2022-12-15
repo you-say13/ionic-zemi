@@ -29,14 +29,23 @@ con.connect((err) =>{
   console.log('success to connection mysql server!!')
 });
 
-const limit = rate({
-  windowMs: 1000,
-  max: 2,
+// const limit = rate({
+//   windowMs: 1000 * 60,
+//   max: 100,
+//   standardHeaders: true,
+//   legacyHeaders: false
+// });
+
+const customlimit = rate({
+  windowMs: 1000*60,
+  max: 100,
+  message: {message: "error"},
+  statusCode: 444,
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
-router.use(limit);
+router.use(customlimit);
 
 
 /* GET todo listing. */
@@ -105,12 +114,18 @@ router.post('/update', [
   }
 })
 
-router.post('/delete',function(req, res, next){
+router.post('/delete', [
+  check('todo_id').not().isEmpty().isNumeric(),
+  check('user_id').not().isEmpty().isNumeric(),
+],function(req, res, next){
+  const errors = validationResult(req);
 
-  if(str[0].length > 1 || str[1] == undefined){
-    return res.status(444).send({message:"bad request(id)", flag:-1})
+  if(!errors.isEmpty()){
+    return res.status(400).send({message:"bad request", flag:-1})
   }
 
+  const todo_id = req.body.todo_id
+  const id = req.body.user_id;
   const q = "delete from todo where todo_id=? and userid=? ;";
   con.query(q, [todo_id, id], (err, results, fields)=>{
     if(err)throw err;
