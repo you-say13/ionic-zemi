@@ -62,9 +62,9 @@
                                     <ion-item lines="none" style="color:gray;">{{item.todo}}</ion-item>
                                     <ion-label>
                                         <ion-buttons style="color: #1e90ff;" class="ion-float-center">
-                                            <ion-button @click="del(item.todo_id, index)">削除</ion-button>
-                                            <ion-button v-if="!item.flag" @click="upd(item.todo_id, item.flag, index)">達成へ</ion-button>
-                                            <ion-button v-else @click="upd(item.todo_id, item.flag, index)">未達成へ</ion-button>
+                                            <ion-button @click="fetch_del(item.todo_id, index)">削除</ion-button>
+                                            <ion-button v-if="!item.flag" @click="fetch_upd(item.todo_id)">達成へ</ion-button>
+                                            <ion-button v-else @click="fetch_upd(item.todo_id)">未達成へ</ion-button>
                                         </ion-buttons>
                                     </ion-label>
                                 </ion-card-content>
@@ -103,6 +103,8 @@ import { defineComponent, ref, reactive, watch, watchEffect } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import ipaddress from '@/address'
 import {useCookies} from "vue3-cookies"
+import {ionic_alert} from './comp/alert_component'
+import {fetch_component} from './comp/fetch_component'
 
 export default defineComponent({
     props:{
@@ -116,20 +118,13 @@ export default defineComponent({
         const title = ref(props.Title)
         const map = reactive(new Map([[0, "未達"],[1, "達成"]]))
         const search = ref("")
-        const todos = ref([
-            Number,
-            String,
-            String,
-            Boolean,
-            Date
-        ])
+        const todos = ref()
 
         //各sort機能のflag変数
         //>>>>
         const comp_flag = ref()
         const desc = ref("desc")
         //<<<<
-
         const auth_info = ref()
 
         const router = useRouter()
@@ -147,6 +142,29 @@ export default defineComponent({
         //<<<<
 
         console.log(search.value)
+
+        //fetch用の関数の定義
+        const {upd, del, progress} = fetch_component() 
+
+        const fetch_del = async(todo_id: number, id:number) =>{
+            if(await ionic_alert("削除しますか？", "削除確認")){
+                del(ipaddress, auth_info.value, todo_id)
+                todos.value.splice(id, 1)
+            }
+        }
+
+        const fetch_upd = async(todo_id: number) =>{
+            if(await ionic_alert("達成状況を更新しますか？", "達成状況の更新")){
+                upd(ipaddress, todo_id, comp_flag.value)
+            } 
+        }
+
+        const fetch_prog = (flag: number) =>{
+            progress(ipaddress, auth_info.value, desc.value, flag).then(res=>{
+                todos.value = res
+                console.log(res)
+            })
+        }
 
         //post通信を行う部分
         //その１：取得
@@ -178,72 +196,22 @@ export default defineComponent({
             })
         }
 
-        //その２：削除
-        const del = (todo_id: number, id:number) =>{
-            const addr = "http://"+ipaddress+"/zemi/delete"
-            const data = {
-                todo_id : todo_id,
-                user_id : auth_info.value
-            }
-            fetch(addr, {
-                method:"POST",
-                headers:{
-                    'Content-Type':'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response=>{
-                return response
-            }).then(res=>{
-                console.log(res)
-                todos.value.splice(id, 1)
-                alert("削除完了しました")
-            }).catch(err =>{
-                console.log(err)
-                alert("削除失敗しました")
-            })
-        }
-
-        //その３：更新 
-        const upd = (todo_id: number, flag:boolean, id:number) =>{
-            const addr = "http://"+ipaddress+"/zemi/update"
-            const data = {
-                todo_id : todo_id,
-                flag : flag,
-            }
-            fetch(addr, {
-                method:"POST",
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify(data)
-            })
-            .then(response=>{
-                return response
-            }).then(res=>{
-                console.log("response:"+res+" and index number:"+id)
-                allfetch()
-                alert("TODOの達成状況を変更しました")
-            }).catch(err=>{
-                console.log(err)
-                alert("達成に変更できませんでした")
-            })
-        }
-
         //ここでcookieデータを削除しログアウトする
-        const logout = () =>{
-            cookies.remove('user_id')
-            if(cookies.get('user_id') == undefined){
-                alert("ログアウトしました")
-                router.push('/signin')
+        const logout = async () =>{
+            if(await ionic_alert("ログアウトしますか？", "ログアウト確認")){
+                cookies.remove('user_id')
+                if(cookies.get('user_id') == undefined){
+                    router.push('/signin')
+                }
             }else{
-                alert("ログアウトできませんでした")
+                console.log("キャンセルされました")
             }
+
         }
 
         //Todo作成後などライフサイクルに変化がないときにデータを再取得するための監視関数
         watch(route, () =>{
-            allfetch()
+            //fetch_select()
         })
         //createTodoへの遷移用関数
         const intent = () =>{
@@ -252,37 +220,16 @@ export default defineComponent({
 
         watchEffect(() => {
             if(comp_flag.value == "1"){
-                progress(1)
+                fetch_prog(1)
                 console.log("fetch予定 comp")
             }else if(comp_flag.value == "0"){
-                progress(0)
+                fetch_prog(0)
                 console.log("fetch予定 uncomp")
             }else if(comp_flag.value == undefined && comp_flag.value == null){
                 allfetch()
                 console.log(comp_flag.value)
             }
         })
-
-        const progress = (flag : number) =>{
-            const addr:string = "http://"+ipaddress+"/zemi/prog"
-            const data = {
-                flag : flag,
-                userid : auth_info.value,
-                desc : desc.value
-            }
-            fetch(addr, {
-                method:"POST",
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify(data)
-            })
-            .then((response)=> response.json())
-            .then((res)=>{
-                todos.value = res
-            })
-            .catch((err)=>console.error(err))
-        }
 
         return{
             title,
@@ -297,6 +244,10 @@ export default defineComponent({
             logout,
             search,
             progress,
+            ionic_alert,
+            fetch_del,
+            fetch_upd,
+            fetch_prog
         }
     },
     components:{
