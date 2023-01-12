@@ -39,7 +39,7 @@
                 </ion-item>
             </ion-toolbar>
         </ion-header>
-        <ion-content :fullscreen="true">
+        <ion-content :fullscreen="true" v-if="loaded">
             <h1 class="ion-text-align">
             </h1>
             <ion-grid>
@@ -63,10 +63,31 @@
                                     <ion-label>
                                         <ion-buttons style="color: #1e90ff;" class="ion-float-center">
                                             <ion-button @click="fetch_del(item.todo_id, index)">削除</ion-button>
-                                            <ion-button v-if="!item.flag" @click="fetch_upd(item.todo_id)">達成へ</ion-button>
-                                            <ion-button v-else @click="fetch_upd(item.todo_id)">未達成へ</ion-button>
+                                            <ion-button v-if="!item.flag" @click="fetch_upd(item.todo_id, item.flag)">達成へ</ion-button>
+                                            <ion-button v-else @click="fetch_upd(item.todo_id, item.flag)">未達成へ</ion-button>
                                         </ion-buttons>
                                     </ion-label>
+                                </ion-card-content>
+                            </ion-card-header>
+                        </ion-card>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-content>
+        <ion-content v-else-if="!loaded">
+            <ion-grid>
+                <ion-row>
+                    <ion-col size="12">
+                        <ion-card>
+                            <ion-card-header>
+                                <ion-card-subtitle>
+                                    <ion-skeleton-text :animated="true" />
+                                </ion-card-subtitle>
+                                <ion-card-title>
+                                    <ion-skeleton-text :animated="true" />
+                                </ion-card-title>
+                                <ion-card-content>
+                                    <ion-skeleton-text :animated="true" />
                                 </ion-card-content>
                             </ion-card-header>
                         </ion-card>
@@ -97,6 +118,7 @@ import {
     IonGrid,
     IonRow,
     IonCol,
+    IonSkeletonText,
 
 } from '@ionic/vue';
 import { defineComponent, ref, reactive, watch, watchEffect } from 'vue'
@@ -119,6 +141,7 @@ export default defineComponent({
         const map = reactive(new Map([[0, "未達"],[1, "達成"]]))
         const search = ref("")
         const todos = ref()
+        const loaded = ref(false)
 
         //各sort機能のflag変数
         //>>>>
@@ -141,21 +164,21 @@ export default defineComponent({
         }
         //<<<<
 
-        console.log(search.value)
-
         //fetch用の関数の定義
         const {upd, del, progress} = fetch_component() 
 
         const fetch_del = async(todo_id: number, id:number) =>{
             if(await ionic_alert("削除しますか？", "削除確認")){
-                del(ipaddress, auth_info.value, todo_id)
-                todos.value.splice(id, 1)
+                await del(ipaddress, auth_info.value, todo_id)
+                await todos.value.splice(id, 1)
             }
         }
 
-        const fetch_upd = async(todo_id: number) =>{
+        const fetch_upd = async(todo_id: number, flag: boolean) =>{
+            console.log(flag)
             if(await ionic_alert("達成状況を更新しますか？", "達成状況の更新")){
-                upd(ipaddress, todo_id, comp_flag.value)
+                await upd(ipaddress, todo_id, flag)
+                await allfetch()
             } 
         }
 
@@ -183,6 +206,7 @@ export default defineComponent({
                 body:JSON.stringify(data)
             })
             .then(response => {
+                loaded.value = true
                 return response.json()
             }).then(res =>{
                 if(res.message == "error"){
@@ -211,7 +235,7 @@ export default defineComponent({
 
         //Todo作成後などライフサイクルに変化がないときにデータを再取得するための監視関数
         watch(route, () =>{
-            //fetch_select()
+            allfetch()
         })
         //createTodoへの遷移用関数
         const intent = () =>{
@@ -227,7 +251,6 @@ export default defineComponent({
                 console.log("fetch予定 uncomp")
             }else if(comp_flag.value == undefined && comp_flag.value == null){
                 allfetch()
-                console.log(comp_flag.value)
             }
         })
 
@@ -237,6 +260,7 @@ export default defineComponent({
             todos,
             intent,
             comp_flag,
+            loaded,
             desc,
             del,
             upd,
@@ -270,6 +294,7 @@ export default defineComponent({
         IonGrid,
         IonRow,
         IonCol,
+        IonSkeletonText,
     }
 })
 </script>
