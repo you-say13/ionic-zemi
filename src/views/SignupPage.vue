@@ -55,6 +55,7 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup';
 import ipaddress from '@/address'
 import {useCookies}from "vue3-cookies"
+import crypto from "crypto-js/"
 
 export default defineComponent({
     setup(props){
@@ -96,7 +97,7 @@ export default defineComponent({
         //vee validation用 監視対象を選択する
         const {value:name} = useField('name');
         const {value:email} = useField('email');
-        const {value:pass} = useField('pass');
+        const {value:pass} = useField<string>('pass');
         const {value:repass} = useField('repass');
 
         //signupメソッド：新規登録用のデータをサーバに送り、返り値を待つ
@@ -104,10 +105,12 @@ export default defineComponent({
 
             console.log('pass signup')
 
+            const mes = crypto.SHA256(pass.value).toString()
+
             const data = {
                 name:name.value,
                 email:email.value,
-                pass:pass.value,
+                pass:mes,
             }
             const addr = "http://"+ipaddress+"/zemi/signup"
             fetch(addr, {
