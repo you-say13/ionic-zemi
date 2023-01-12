@@ -23,7 +23,7 @@ export const fetch_component = () =>{
             }
         })
         .catch((error)=>{
-            console.log("occurred error:" + error)
+            return error
         })
         return await tododata
     }
@@ -63,12 +63,11 @@ export const fetch_component = () =>{
             body:JSON.stringify(data)
         })
         .then(response=>{
-            return response
+            return response.json()
         }).then(res=>{
-            console.log(res)
+            return res
         }).catch(err=>{
-            console.log(err)
-            alert("達成に変更できませんでした")
+            return err
         })
     }
 
@@ -93,7 +92,6 @@ export const fetch_component = () =>{
         })
         .then((res)=>{
             prog_todo = res
-            console.log()
         })
         .catch((err)=>console.error(err))
 

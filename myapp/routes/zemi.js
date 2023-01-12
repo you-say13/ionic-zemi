@@ -182,7 +182,7 @@ router.post("/prog",function(req, res){
 router.post('/signup', [
   check('name').not().isEmpty().isLength({min:1, max:20}),
   check('email').not().isEmpty().isLength({min:5, max:30}).isEmail(),
-  check('pass').not().isEmpty().isLength({mix:6, max:12})
+  check('pass').not().isEmpty()
 ],function(req, res, next){
 
   const errors = validationResult(req);
@@ -220,7 +220,7 @@ router.post('/signin',function(req, res, next){
   const auth = Buffer.from(req.headers.authorization, 'base64').toString()
   const str = auth.split(':');
 
-  if(!(str[0].length >= 1) || !(str[0].length <= 20) || !(str[1].length >= 6) || !(str[1].length <= 12)){
+  if(!(str[0].length >= 1) || !(str[0].length <= 20) || !(str[1].length >= 1)){
     return res.send({message:"bad request(name or password)", flag:-1})
   }
 
@@ -236,7 +236,6 @@ router.post('/signin',function(req, res, next){
         pass: str[1],
       }
       const token = jwt.sign(payload, "ionic-zemi-secret-key")
-      console.log(results[0].user_id)
       return res.send({message:"ログインしました", flag:1, token, id:results[0].user_id})
     }
   })

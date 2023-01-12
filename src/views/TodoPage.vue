@@ -6,10 +6,10 @@
                     <ion-button @click="logout" expand="round" class="ion-float-left">ログアウト</ion-button>
                     <ion-title>ToDo</ion-title>
                     <ion-button @click="intent" expand="round" class="ion-float-right">Todo追加</ion-button>
-                </ion-buttons>            
+                </ion-buttons>         
             </ion-toolbar>
             <ion-toolbar>
-                <ion-item>
+                <ion-item lines="none">
                     <ion-radio-group allow-empty-selection v-model="comp_flag">
                         <ion-item lines="none">
                             <ion-item lines="none"> 
@@ -22,8 +22,7 @@
                             </ion-item>
                         </ion-item>
                     </ion-radio-group>
-                </ion-item>
-                <ion-item>
+
                     <ion-radio-group v-model="desc">
                         <ion-item lines="none">
                             <ion-item lines="none">
@@ -213,6 +212,7 @@ export default defineComponent({
                     alert("アクセス回数が多すぎます。少し時間をおいて下さい")
                 }else{
                     todos.value = res
+                    console.log(res)
                 }
             })
             .catch((error)=>{

@@ -39,19 +39,19 @@ import {
     IonInput,
     IonButton
 } from "@ionic/vue"
-import { defineComponent, onBeforeMount, ref } from "@vue/runtime-core"
-import { useRouter } from 'vue-router'
+import { defineComponent, onBeforeMount, ref, watch } from "@vue/runtime-core"
+import { useRouter, useRoute } from 'vue-router'
 import { useField, useForm } from 'vee-validate'
 import { object, string } from 'yup';
 import ipaddress from '@/address'
 import { useCookies } from "vue3-cookies";
+import crypto from "crypto-js"
 
 export default defineComponent({
     setup(props){
 
         //ルーターから無理やり遷移するときに使う
         const router = useRouter()
-
         const { cookies } = useCookies();
 
         onBeforeMount(()=>{
@@ -85,18 +85,18 @@ export default defineComponent({
         //vee validation用 監視対象を選択する
 
         const {value:name} = useField('name');
-        const {value:pass} = useField('pass');
+        const {value:pass} = useField<string>('pass');
 
 
         //signinメソッド：ログイン用のデータをサーバに送り、返り値を待つ
         const signin = () =>{
-            const data = {
-                name:name.value,
-                pass:pass.value,
+            if(cookies.get("user_id") != undefined){
+                alert("既にログインしています")
+                router.push({name:"todo", params: {title: "Todo"}})
             }
-            const basic_a : string = name.value+":"+pass.value
+            const mes = crypto.SHA256(pass.value).toString()
+            const basic_a : string = name.value+":"+mes
             const auth : string = btoa(unescape(encodeURIComponent(basic_a)))
-
             const addr = "http://"+ipaddress+"/zemi/signin"
             fetch(addr, {
                 method:"POST",
@@ -104,11 +104,10 @@ export default defineComponent({
                     'Content-Type':'application/json',
                     'Authorization':auth,
                 },
-                body:JSON.stringify(data)
             })
             .then((res)=>res.json())
             .then((data)=>{
-                if(data.flag==0){
+                if(data.flag==0 || data.flag == -1){
                     alert(data.message)
                     return
                 }else{
