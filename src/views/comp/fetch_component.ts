@@ -48,8 +48,9 @@ export const fetch_component = () =>{
     }
 
     //その３：更新 
-    const upd = async (ipaddress: string, todo_id: number, flag:boolean) =>{
+    const upd = async (ipaddress: string, todo_id: number, flag: boolean) =>{
         const addr = "http://"+ipaddress+"/zemi/update"
+        console.log(ipaddress+":"+todo_id+":"+flag)
         const data = {
             todo_id : todo_id,
             flag : flag,
@@ -65,7 +66,6 @@ export const fetch_component = () =>{
             return response
         }).then(res=>{
             console.log(res)
-            alert("TODOの達成状況を変更しました")
         }).catch(err=>{
             console.log(err)
             alert("達成に変更できませんでした")
