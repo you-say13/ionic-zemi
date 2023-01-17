@@ -22,7 +22,8 @@
                             </ion-item>
                         </ion-item>
                     </ion-radio-group>
-
+                </ion-item>
+                <ion-item>
                     <ion-radio-group v-model="desc">
                         <ion-item lines="none">
                             <ion-item lines="none">
@@ -167,7 +168,13 @@ export default defineComponent({
         const {upd, del, progress} = fetch_component() 
 
         const fetch_del = async(todo_id: number, id:number) =>{
-            if(await ionic_alert("削除しますか？", "削除確認")){
+            const option = {
+                header:"削除確認",
+                message:"削除しますか？",
+                conf_text:"はい",
+                dis_text:"いいえ",
+            }
+            if(await ionic_alert(option)){
                 await del(ipaddress, auth_info.value, todo_id)
                 await todos.value.splice(id, 1)
             }
@@ -175,7 +182,11 @@ export default defineComponent({
 
         const fetch_upd = async(todo_id: number, flag: boolean) =>{
             console.log(flag)
-            if(await ionic_alert("達成状況を更新しますか？", "達成状況の更新")){
+            const option = {
+                header:"達成状況の更新",
+                message:"達成状況を更新しますか？",
+            }
+            if(await ionic_alert(option)){
                 await upd(ipaddress, todo_id, flag)
                 await allfetch()
             } 
@@ -184,7 +195,6 @@ export default defineComponent({
         const fetch_prog = (flag: number) =>{
             progress(ipaddress, auth_info.value, desc.value, flag).then(res=>{
                 todos.value = res
-                console.log(res)
             })
         }
 
@@ -212,7 +222,6 @@ export default defineComponent({
                     alert("アクセス回数が多すぎます。少し時間をおいて下さい")
                 }else{
                     todos.value = res
-                    console.log(res)
                 }
             })
             .catch((error)=>{
@@ -222,7 +231,13 @@ export default defineComponent({
 
         //ここでcookieデータを削除しログアウトする
         const logout = async () =>{
-            if(await ionic_alert("ログアウトしますか？", "ログアウト確認")){
+            const option = {
+                header:"ログアウト確認",
+                message:"ログアウトしますか？",
+                conf_text:"はい",
+                dis_text:"いいえ"
+            }
+            if(await ionic_alert(option)){
                 cookies.remove('user_id')
                 if(cookies.get('user_id') == undefined){
                     router.push('/signin')
