@@ -168,13 +168,10 @@ export default defineComponent({
         const {upd, del, progress} = fetch_component() 
 
         const fetch_del = async(todo_id: number, id:number) =>{
-            const option = {
-                header:"削除確認",
-                message:"削除しますか？",
-                conf_text:"はい",
-                dis_text:"いいえ",
-            }
-            if(await ionic_alert(option)){
+            if(await ionic_alert({
+                header:"達成状況の更新",
+                message:"達成状況を更新しますか？",
+            })){
                 await del(ipaddress, auth_info.value, todo_id)
                 await todos.value.splice(id, 1)
             }
@@ -182,11 +179,10 @@ export default defineComponent({
 
         const fetch_upd = async(todo_id: number, flag: boolean) =>{
             console.log(flag)
-            const option = {
+            if(await ionic_alert({
                 header:"達成状況の更新",
                 message:"達成状況を更新しますか？",
-            }
-            if(await ionic_alert(option)){
+            })){
                 await upd(ipaddress, todo_id, flag)
                 await allfetch()
             } 
@@ -231,13 +227,11 @@ export default defineComponent({
 
         //ここでcookieデータを削除しログアウトする
         const logout = async () =>{
-            const option = {
+
+            if(await ionic_alert({
                 header:"ログアウト確認",
                 message:"ログアウトしますか？",
-                conf_text:"はい",
-                dis_text:"いいえ"
-            }
-            if(await ionic_alert(option)){
+            })){
                 cookies.remove('user_id')
                 if(cookies.get('user_id') == undefined){
                     router.push('/signin')
