@@ -39,8 +39,8 @@ import {
     IonInput,
     IonButton
 } from "@ionic/vue"
-import { defineComponent, onBeforeMount, ref, watch } from "@vue/runtime-core"
-import { useRouter, useRoute } from 'vue-router'
+import { defineComponent, onBeforeMount, ref } from "@vue/runtime-core"
+import { useRouter } from 'vue-router'
 import { useField, useForm } from 'vee-validate'
 import { object, string } from 'yup';
 import ipaddress from '@/address'
