@@ -43,7 +43,7 @@
             <h1 class="ion-text-align">
             </h1>
             <ion-grid>
-                <ion-row>
+                <ion-row v-if="todos.length != 0">
                     <ion-col size="12" v-for="(item, index) in todos" :key="item.todo_id">
                         <ion-card>
                             <ion-card-header>
@@ -72,12 +72,20 @@
                         </ion-card>
                     </ion-col>
                 </ion-row>
+                <ion-card v-else>
+                    <ion-card-title>
+                        まだTodoがありません😢
+                    </ion-card-title>
+                    <ion-card-content>
+                        作成はこちら=><span @click="intent" style="color:skyblue">Todoを作る</span>
+                    </ion-card-content>
+                </ion-card>
             </ion-grid>
         </ion-content>
         <ion-content v-else-if="!loaded">
             <ion-grid>
                 <ion-row>
-                    <ion-col size="12">
+                    <ion-col size="12" v-for="n of 10" :key="n">
                         <ion-card>
                             <ion-card-header>
                                 <ion-card-subtitle>
@@ -307,8 +315,14 @@ export default defineComponent({
     }
 })
 </script>
-<style>
+<style scoped>
 ion-title{
     text-align: center;
+}
+ion-content{
+    --ion-background-color:gainsboro;
+}
+ion-grid{
+    --ion-background-color:white;
 }
 </style>
